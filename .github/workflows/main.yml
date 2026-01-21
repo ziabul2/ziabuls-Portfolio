@@ -1,0 +1,10 @@
+name: PHP Test
+on: [push]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - name: Run PHP
+        run: php -l index.php # Checks for syntax errors
+        
