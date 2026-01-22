@@ -69,8 +69,9 @@ foreach ($data['skills_section']['categories'] ?? [] as $cat) {
     <div class="stat-card">
         <h3><i class="fas fa-blog"></i> Blog Posts</h3>
         <p>Manage your articles and news updates.</p>
-        <div style="margin-top:20px;">
-            <a href="manage-blog.php" class="btn-edit">Manage Blog</a>
+        <div style="margin-top:20px; display: flex; gap: 10px;">
+            <a href="manage-blog.php" class="btn-edit">Manage Posts</a>
+            <a href="edit-blog-settings.php" class="btn-edit">UI Settings</a>
         </div>
     </div>
 </div>

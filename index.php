@@ -17,7 +17,7 @@ $data = loadPortfolioData();
 <?php include __DIR__ . '/includes/skills.php'; ?>
 
 <?php include __DIR__ . '/includes/about.php'; ?>
-
+<?php include __DIR__ . '/includes/blog_preview.php'; ?>
 <?php include __DIR__ . '/includes/contact.php'; ?>
 
 <?php include __DIR__ . '/includes/footer.php'; ?>

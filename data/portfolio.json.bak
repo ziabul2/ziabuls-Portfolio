@@ -149,14 +149,19 @@
         "media_title": "Media",
         "copyright_text": "Made by Ziabul Islam"
     },
+    "blog_section": {
+        "title": "LATEST NEWS",
+        "view_all_text": "View all ~~&gt;",
+        "view_all_link": "blog.php"
+    },
     "blog_posts": [
         {
-            "id": "my-first-post",
-            "title": "My First Post",
-            "summary": "Testing the system",
-            "content": "This is a test blog post content.",
+            "id": "01",
+            "title": "Demo post",
+            "summary": "Test proj",
+            "content": "<h1>Hello Everyone</h1>\r\nwelcome :)",
             "date": "2026-01-22",
-            "image": "assets/project1.png",
+            "image": "assets/Twitter.svg",
             "status": "published"
         }
     ]
