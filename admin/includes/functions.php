@@ -25,26 +25,36 @@ function getPortfolioData() {
 /**
  * Saves data to the portfolio.json file with backup
  */
+require_once __DIR__ . '/../../helpers/BackupManager.php';
+
+/**
+ * Saves data to the portfolio.json file with backup
+ */
 function savePortfolioData($data) {
     if (empty($data)) return false;
     
     $filePath = getPortfolioFilePath();
+    $backupManager = new BackupManager($filePath);
     
-    // Create backup before writing
-    if (file_exists($filePath)) {
-        copy($filePath, $filePath . '.bak');
-    }
-    
-    // Pretty print JSON and save
-    $json = json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
-    
-    // Atomic write
-    $tempFile = $filePath . '.tmp';
-    if (file_put_contents($tempFile, $json) !== false) {
-        return rename($tempFile, $filePath);
-    }
-    
-    return false;
+    return $backupManager->saveSafely($data);
+}
+
+/**
+ * Get list of available backups
+ */
+function getBackups() {
+    $filePath = getPortfolioFilePath();
+    $backupManager = new BackupManager($filePath);
+    return $backupManager->getBackups();
+}
+
+/**
+ * Restore a backup
+ */
+function restoreBackup($filename) {
+    $filePath = getPortfolioFilePath();
+    $backupManager = new BackupManager($filePath);
+    return $backupManager->restoreBackup($filename);
 }
 
 /**
