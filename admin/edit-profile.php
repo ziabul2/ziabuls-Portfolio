@@ -7,6 +7,7 @@ $flash = getFlashMessage();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Update Hero section
+    $data['hero']['image'] = sanitizeInput($_POST['hero_image']);
     $data['hero']['name'] = sanitizeInput($_POST['hero_name']);
     $data['hero']['description'] = sanitizeInput($_POST['hero_desc']);
     $data['hero']['quote'] = sanitizeInput($_POST['hero_quote']);
@@ -14,6 +15,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data['hero']['status_highlight'] = sanitizeInput($_POST['status_highlight']);
     
     // Update About section
+    $data['about_section']['image'] = sanitizeInput($_POST['about_image']);
     $data['about_section']['intro'] = sanitizeInput($_POST['about_intro']);
     if (isset($_POST['about_paragraphs']) && is_array($_POST['about_paragraphs'])) {
         $data['about_section']['paragraphs'] = array_map('sanitizeInput', array_filter($_POST['about_paragraphs']));
@@ -56,6 +58,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <div class="editor-card">
         <h2>Hero Section</h2>
         <div class="form-group">
+            <label>Hero Image</label>
+            <img id="hero_img_preview" src="../<?php echo htmlspecialchars($data['hero']['image']); ?>" class="image-preview">
+            <div class="image-picker-controls">
+                <input type="text" id="hero_image" name="hero_image" value="<?php echo htmlspecialchars($data['hero']['image']); ?>" readonly style="background:#111;">
+                <button type="button" class="btn-edit" onclick="openMediaPicker('hero_image', 'hero_img_preview')">Change Image</button>
+            </div>
+        </div>
+        <div class="form-group">
             <label for="hero_name">Display Name</label>
             <input type="text" id="hero_name" name="hero_name" value="<?php echo htmlspecialchars($data['hero']['name']); ?>" required>
         </div>
@@ -79,6 +89,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     <div class="editor-card">
         <h2>About Me Section</h2>
+        <div class="form-group">
+            <label>Profile Image (About Section)</label>
+            <img id="about_img_preview" src="../<?php echo htmlspecialchars($data['about_section']['image']); ?>" class="image-preview">
+            <div class="image-picker-controls">
+                <input type="text" id="about_image" name="about_image" value="<?php echo htmlspecialchars($data['about_section']['image']); ?>" readonly style="background:#111;">
+                <button type="button" class="btn-edit" onclick="openMediaPicker('about_image', 'about_img_preview')">Change Image</button>
+            </div>
+        </div>
         <div class="form-group">
             <label for="about_intro">Intro Text</label>
             <input type="text" id="about_intro" name="about_intro" value="<?php echo htmlspecialchars($data['about_section']['intro']); ?>" required>
@@ -165,4 +183,7 @@ document.getElementById('add-social').addEventListener('click', function() {
 });
 </script>
 
-<?php require_once __DIR__ . '/includes/footer.php'; ?>
+<?php 
+require_once __DIR__ . '/includes/media-picker.php';
+require_once __DIR__ . '/includes/footer.php'; 
+?>

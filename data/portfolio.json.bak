@@ -30,7 +30,7 @@
         }
     ],
     "hero": {
-        "name": "Ziabul",
+        "name": "ZIABUL ISLAM",
         "roles": [
             "computer engineer",
             "account manager"
@@ -52,7 +52,7 @@
                 "title": "My Portfolio Website",
                 "technologies": "PHP CSS MySQL",
                 "description": "Personal portfolio built with raw PHP and custom CSS.",
-                "link_text": "Live &amp;lt;~&amp;gt;",
+                "link_text": "Live",
                 "link_url": "#",
                 "image": "assets/project1.png"
             },
@@ -60,7 +60,7 @@
                 "title": "Accounts System",
                 "technologies": "Python Tkinter SQLite",
                 "description": "Automated accounting tool for Rangpur Eye Hospital.",
-                "link_text": "Cached &amp;gt;=",
+                "link_text": "Cached",
                 "link_url": "#",
                 "image": "assets/project2.png"
             },
@@ -68,7 +68,7 @@
                 "title": "Network Setup",
                 "technologies": "Cisco Packet Tracer",
                 "description": "Hospital networking infrastructure setup and management.",
-                "link_text": "View -&amp;gt;",
+                "link_text": "View",
                 "link_url": "#",
                 "image": "assets/project3.png"
             }
@@ -143,10 +143,21 @@
         "email_button_text": "Email Now"
     },
     "footer": {
-        "logo_text": "ZIMBABU",
+        "logo_text": "ZIABUL ISLAM",
         "role": "Computer Engineer",
-        "email": "ziabulislam2222@gmail.com",
+        "email": "ziabul@duck.com",
         "media_title": "Media",
         "copyright_text": "Made by Ziabul Islam"
-    }
+    },
+    "blog_posts": [
+        {
+            "id": "my-first-post",
+            "title": "My First Post",
+            "summary": "Testing the system",
+            "content": "This is a test blog post content.",
+            "date": "2026-01-22",
+            "image": "assets/project1.png",
+            "status": "published"
+        }
+    ]
 }

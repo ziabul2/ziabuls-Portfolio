@@ -57,6 +57,22 @@ foreach ($data['skills_section']['categories'] ?? [] as $cat) {
             <a href="edit-seo.php" class="btn-edit">Edit SEO</a>
         </div>
     </div>
+
+    <div class="stat-card">
+        <h3><i class="fas fa-desktop"></i> Header & Footer</h3>
+        <p>Manage site logos, roles, and footer info.</p>
+        <div style="margin-top:20px;">
+            <a href="edit-site.php" class="btn-edit">Edit UI</a>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <h3><i class="fas fa-blog"></i> Blog Posts</h3>
+        <p>Manage your articles and news updates.</p>
+        <div style="margin-top:20px;">
+            <a href="manage-blog.php" class="btn-edit">Manage Blog</a>
+        </div>
+    </div>
 </div>
 
 <div class="security-info" style="margin-top: 50px; padding: 20px; background: rgba(255,255,255,0.05); border-radius: 8px;">

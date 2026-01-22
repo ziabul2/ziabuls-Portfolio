@@ -69,8 +69,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>Image Path (e.g. assets/project1.png)</label>
-                    <input type="text" name="projects[<?php echo $index; ?>][image]" value="<?php echo htmlspecialchars($item['image']); ?>" required>
+                    <label>Project Image</label>
+                    <img id="proj_img_preview_<?php echo $index; ?>" src="../<?php echo htmlspecialchars($item['image']); ?>" class="image-preview">
+                    <div class="image-picker-controls">
+                        <input type="text" id="proj_image_<?php echo $index; ?>" name="projects[<?php echo $index; ?>][image]" value="<?php echo htmlspecialchars($item['image']); ?>" readonly style="background:#111;">
+                        <button type="button" class="btn-edit" onclick="openMediaPicker('proj_image_<?php echo $index; ?>', 'proj_img_preview_<?php echo $index; ?>')">Change Image</button>
+                    </div>
                 </div>
             </div>
         <?php endforeach; ?>
@@ -114,8 +118,12 @@ document.getElementById('add-project').addEventListener('click', function() {
             </div>
         </div>
         <div class="form-group">
-            <label>Image Path</label>
-            <input type="text" name="projects[${projectCount}][image]" required>
+            <label>Project Image</label>
+            <img id="proj_img_preview_${currentCount}" src="../assets/project1.png" class="image-preview">
+            <div class="image-picker-controls">
+                <input type="text" id="proj_image_${currentCount}" name="projects[${currentCount}][image]" value="assets/project1.png" readonly style="background:#111;">
+                <button type="button" class="btn-edit" onclick="openMediaPicker('proj_image_${currentCount}', 'proj_img_preview_${currentCount}')">Change Image</button>
+            </div>
         </div>
     `;
     container.appendChild(div);
@@ -123,4 +131,7 @@ document.getElementById('add-project').addEventListener('click', function() {
 });
 </script>
 
-<?php require_once __DIR__ . '/includes/footer.php'; ?>
+<?php 
+require_once __DIR__ . '/includes/media-picker.php';
+require_once __DIR__ . '/includes/footer.php'; 
+?>

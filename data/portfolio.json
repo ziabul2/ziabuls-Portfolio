@@ -30,7 +30,7 @@
         }
     ],
     "hero": {
-        "name": "Ziabul",
+        "name": "ZIABUL ISLAM",
         "roles": [
             "computer engineer",
             "account manager"
@@ -143,10 +143,21 @@
         "email_button_text": "Email Now"
     },
     "footer": {
-        "logo_text": "ZIMBABU",
+        "logo_text": "ZIABUL ISLAM",
         "role": "Computer Engineer",
-        "email": "ziabulislam2222@gmail.com",
+        "email": "ziabul@duck.com",
         "media_title": "Media",
         "copyright_text": "Made by Ziabul Islam"
-    }
+    },
+    "blog_posts": [
+        {
+            "id": "my-first-post",
+            "title": "My First Post",
+            "summary": "Testing the system",
+            "content": "This is a test blog post content.",
+            "date": "2026-01-22",
+            "image": "assets/project1.png",
+            "status": "published"
+        }
+    ]
 }
