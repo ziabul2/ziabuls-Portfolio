@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Projects | ZIMBABU</title>
     <!-- CSS -->
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/style.css?v=<?php echo time(); ?>">
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <!-- Favicon -->
@@ -41,7 +41,7 @@
     </nav>
 
     <!-- Projects Header -->
-    <section class="hero" style="margin-bottom: 40px;">
+    <section class="hero" style="padding-top: 40px; margin-bottom: 40px;">
         <div class="container">
             <div class="hero-text">
                 <h1><span>/</span>projects</h1>
@@ -62,9 +62,7 @@
                 <!-- Project 1 -->
                 <div class="project-card">
                     <div class="project-img">
-                         <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#444;">
-                            <i class="fas fa-laptop-code fa-3x"></i>
-                        </div>
+                        <img src="assets/project1.png" alt="Portfolio Website">
                     </div>
                     <div class="project-tags">HTML CSS PHP</div>
                     <div class="project-info">
@@ -80,9 +78,7 @@
                  <!-- Project 2 -->
                  <div class="project-card">
                     <div class="project-img">
-                        <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#444;">
-                            <i class="fas fa-file-invoice fa-3x"></i>
-                        </div>
+                        <img src="assets/project2.png" alt="Accounts System">
                     </div>
                     <div class="project-tags">Python Excel</div>
                     <div class="project-info">
@@ -97,9 +93,7 @@
                  <!-- Project 3 -->
                  <div class="project-card">
                     <div class="project-img">
-                        <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#444;">
-                            <i class="fas fa-network-wired fa-3x"></i>
-                        </div>
+                        <img src="assets/project3.png" alt="Network Setup">
                     </div>
                     <div class="project-tags">Networking Cisco</div>
                     <div class="project-info">

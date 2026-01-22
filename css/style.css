@@ -30,6 +30,7 @@ body {
     font-family: var(--font-main);
     line-height: 1.6;
     overflow-x: hidden;
+    padding-top: 80px;
 }
 
 /* Animations */
@@ -191,7 +192,7 @@ a:hover {
 .social-sidebar {
     position: fixed;
     left: 20px;
-    top: 0;
+    top: 100px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -202,22 +203,33 @@ a:hover {
 .social-line {
     width: 1px;
     height: 150px;
-    /* Reduced to connect better visually */
     background: var(--text-color);
     margin-bottom: 10px;
 }
 
 .social-icon {
-    width: 24px;
-    height: 24px;
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
-    margin-bottom: 5px;
+    margin-bottom: 8px;
+    color: var(--text-color);
+    font-size: 1.2rem;
+    transition: all 0.3s ease;
+}
+
+.social-icon:hover {
+    color: var(--primary-color);
+    transform: translateY(-2px);
 }
 
 .social-icon img {
     width: 100%;
+}
+
+.social-icon i {
+    font-size: 1.2rem;
 }
 
 /* Hero Section */
@@ -356,15 +368,19 @@ a:hover {
     object-fit: cover;
 }
 
+.project-tech,
 .project-tags {
     padding: 8px 15px;
     border-bottom: 1px solid var(--text-color);
     font-size: 0.9rem;
     color: var(--text-color);
+    text-align: center !important;
 }
 
+/* Project info section (used in projects.php) */
 .project-info {
     padding: 20px;
+    text-align: center !important;
 }
 
 .project-info h3 {
@@ -375,6 +391,41 @@ a:hover {
 .project-info p {
     font-size: 0.95rem;
     margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+/* Project content section (used in index.php) */
+.project-content {
+    padding: 20px;
+    text-align: center !important;
+}
+
+.project-content h3 {
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+}
+
+.project-content p {
+    font-size: 0.95rem;
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+/* Center all project card buttons and button containers */
+.project-info>div,
+.project-info>a,
+.project-content>div,
+.project-content>a {
+    display: inline-flex !important;
+    gap: 10px;
+    justify-content: center !important;
+    flex-wrap: wrap;
+}
+
+/* Ensure flex containers inside project cards are centered */
+div[style*="display:flex"],
+div[style*="display: flex"] {
+    justify-content: center !important;
 }
 
 /* Skills Section */

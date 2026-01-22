@@ -1,0 +1,109 @@
+{
+  "seo": {
+    "title": "ZIMBABU | Computer Engineer",
+    "favicon": "assets/ziabul islam - non bg.png",
+    "stylesheets": [
+      "css/style.css",
+      "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    ]
+  },
+  "social_links": [
+    {"platform": "github", "url": "https://github.com/ziabul2", "icon": "fab fa-github"},
+    {"platform": "facebook", "url": "https://www.facebook.com/ziabul123", "icon": "fab fa-facebook"},
+    {"platform": "hackerrank", "url": "https://www.hackerrank.com/profile/ziabul", "icon": "fab fa-hackerrank"},
+    {"platform": "linkedin", "url": "https://www.linkedin.com/in/md-ziabul-islam-zimbabu-14b5b21a3/", "icon": "fab fa-linkedin"}
+  ],
+  "hero": {
+    "name": "Zimbabu",
+    "roles": ["computer engineer", "account manager"],
+    "description": "He crafts responsive websites where technologies meet creativity",
+    "contact_button_text": "Contact me !!",
+    "quote": "With great power comes great electricity bill",
+    "quote_author": "Dr. Who",
+    "image": "assets/ziabul islam - non bg.png",
+    "status_prefix": "Currently working on",
+    "status_highlight": "Portfolio"
+  },
+  "projects_section": {
+    "title": "projects",
+    "view_all_text": "View all ~~>",
+    "view_all_link": "projects.php",
+    "items": [
+      {
+        "title": "Portfolio Website",
+        "technologies": "PHP CSS MySQL",
+        "description": "Personal portfolio built with raw PHP and custom CSS.",
+        "link_text": "Live <~>",
+        "link_url": "#",
+        "image": "assets/project1.png" 
+      },
+      {
+        "title": "Accounts System",
+        "technologies": "Python Tkinter SQLite",
+        "description": "Automated accounting tool for Rangpur Eye Hospital.",
+        "link_text": "Cached >=",
+        "link_url": "#",
+        "image": "assets/project2.png"
+      },
+      {
+        "title": "Network Setup",
+        "technologies": "Cisco Packet Tracer",
+        "description": "Hospital networking infrastructure setup and management.",
+        "link_text": "View ->",
+        "link_url": "#",
+        "image": "assets/project3.png"
+      }
+    ]
+  },
+  "skills_section": {
+    "title": "skills",
+    "categories": [
+      {
+        "name": "Languages",
+        "items": ["JavaScript", "Python", "PHP"]
+      },
+      {
+        "name": "Databases",
+        "items": ["SQLite", "PostgreSQL", "Mongo"]
+      },
+      {
+        "name": "Tools",
+        "items": ["VSCode", "Figma", "Git", "Font Awesome"]
+      },
+      {
+        "name": "Other",
+        "items": ["HTML", "CSS", "EJS", "SCSS", "REST"]
+      },
+      {
+        "name": "Frameworks",
+        "items": ["React", "Flask", "Django"]
+      }
+    ]
+  },
+  "about_section": {
+    "title": "about-me",
+    "intro": "Hello, i’m Ziabul Islam!",
+    "paragraphs": [
+      "I’m a self-taught computer engineer based in Rangpur, Bangladesh. I can develop responsive websites from scratch and raise them into modern user-friendly web experiences.",
+      "Transforming my creativity and knowledge into wwebsites has been my passion for over a year. I have been helping various clients to establish their presence online. I always strive to learn about the newest technologies and frameworks."
+    ],
+    "button_text": "Read more ->",
+    "button_link": "#",
+    "image": "assets/ziabul islam - non bg.png"
+  },
+  "contact_section": {
+    "title": "contacts",
+    "intro": "I’m interested in freelance opportunities. However, if you have other request or question, don’t hesitate to contact me",
+    "message_title": "Message me here",
+    "phone": "01581205088",
+    "email": "ziabulislam2222@gmail.com",
+    "email_button_text": "Email Now"
+  },
+  "footer": {
+    "logo_text": "ZIMBABU",
+    "role": "Computer Engineer",
+    "email": "ziabulislam2222@gmail.com",
+    "media_title": "Media",
+    "copyright_text": "Made by Ziabul Islam"
+  }
+}
