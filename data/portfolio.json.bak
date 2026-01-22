@@ -52,7 +52,7 @@
                 "title": "My Portfolio Website",
                 "technologies": "PHP CSS MySQL",
                 "description": "Personal portfolio built with raw PHP and custom CSS.",
-                "link_text": "Live",
+                "link_text": "Live &amp;lt;~&amp;gt;",
                 "link_url": "#",
                 "image": "assets/project1.png"
             },
@@ -60,7 +60,7 @@
                 "title": "Accounts System",
                 "technologies": "Python Tkinter SQLite",
                 "description": "Automated accounting tool for Rangpur Eye Hospital.",
-                "link_text": "Cached",
+                "link_text": "Cached &amp;gt;=",
                 "link_url": "#",
                 "image": "assets/project2.png"
             },
@@ -68,7 +68,7 @@
                 "title": "Network Setup",
                 "technologies": "Cisco Packet Tracer",
                 "description": "Hospital networking infrastructure setup and management.",
-                "link_text": "View",
+                "link_text": "View -&amp;gt;",
                 "link_url": "#",
                 "image": "assets/project3.png"
             }

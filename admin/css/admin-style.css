@@ -19,6 +19,7 @@ body {
     color: var(--text-color);
     font-family: 'Fira Code', monospace;
     line-height: 1.6;
+    padding-top: 100px;
 }
 
 .admin-container {
@@ -87,21 +88,83 @@ body {
 .error-msg {
     color: var(--error-color);
     background: rgba(224, 108, 117, 0.1);
-    padding: 10px;
+    padding: 15px;
     border-radius: 4px;
     margin-bottom: 20px;
     text-align: center;
+    border: 1px solid var(--error-color);
+}
+
+.success-msg {
+    color: var(--success-color);
+    background: rgba(152, 195, 121, 0.1);
+    padding: 15px;
+    border-radius: 4px;
+    margin-bottom: 20px;
+    text-align: center;
+    border: 1px solid var(--success-color);
+}
+
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    background: #2c3e50;
+    border: 1px solid #444;
+    color: white;
+    border-radius: 4px;
+    min-height: 100px;
+    font-family: inherit;
+}
+
+.editor-card {
+    background: var(--card-bg);
+    padding: 30px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+}
+
+.repeater-item {
+    border: 1px dashed #444;
+    padding: 20px;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.btn-add {
+    background: var(--success-color);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-bottom: 20px;
+}
+
+.btn-remove {
+    background: var(--error-color);
+    color: white;
+    padding: 5px 10px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 10px;
 }
 
 /* Dashboard */
 header {
     background: var(--card-bg);
-    padding: 20px;
-    margin-bottom: 40px;
+    padding: 20px 40px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     border-bottom: 1px solid var(--accent-color);
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
 }
 
 .nav-links a {

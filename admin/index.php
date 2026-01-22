@@ -22,7 +22,7 @@ foreach ($data['skills_section']['categories'] ?? [] as $cat) {
         <h3><i class="fas fa-project-diagram"></i> Projects</h3>
         <p>Currently displaying <strong><?php echo $project_count; ?></strong> projects.</p>
         <div style="margin-top:20px;">
-            <a href="#" class="btn-edit">Edit Projects</a>
+            <a href="edit-projects.php" class="btn-edit">Edit Projects</a>
         </div>
     </div>
     
@@ -30,7 +30,7 @@ foreach ($data['skills_section']['categories'] ?? [] as $cat) {
         <h3><i class="fas fa-tools"></i> Skills</h3>
         <p>Total of <strong><?php echo $skill_count; ?></strong> skills listed.</p>
         <div style="margin-top:20px;">
-            <a href="#" class="btn-edit">Edit Skills</a>
+            <a href="edit-skills.php" class="btn-edit">Edit Skills</a>
         </div>
     </div>
     
@@ -38,7 +38,7 @@ foreach ($data['skills_section']['categories'] ?? [] as $cat) {
         <h3><i class="fas fa-user-circle"></i> Profile</h3>
         <p>Edit your bio, photo, and social links.</p>
         <div style="margin-top:20px;">
-            <a href="#" class="btn-edit">Edit Profile</a>
+            <a href="edit-profile.php" class="btn-edit">Edit Profile</a>
         </div>
     </div>
     
@@ -46,7 +46,15 @@ foreach ($data['skills_section']['categories'] ?? [] as $cat) {
         <h3><i class="fas fa-envelope"></i> Contacts</h3>
         <p>Update your contact info and location.</p>
         <div style="margin-top:20px;">
-            <a href="#" class="btn-edit">Edit Contacts</a>
+            <a href="edit-contact.php" class="btn-edit">Edit Contacts</a>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <h3><i class="fas fa-search"></i> SEO & Site</h3>
+        <p>Manage site title, favicon, and CSS links.</p>
+        <div style="margin-top:20px;">
+            <a href="edit-seo.php" class="btn-edit">Edit SEO</a>
         </div>
     </div>
 </div>
