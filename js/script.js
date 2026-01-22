@@ -33,8 +33,22 @@ document.addEventListener('DOMContentLoaded', () => {
     // Navbar active state on scroll
     const sections = document.querySelectorAll('section');
     const navLinks = document.querySelectorAll('.nav-link');
+    const backToTopButton = document.getElementById("backToTop");
 
     window.addEventListener('scroll', () => {
+        // Back to Top Button Logic
+        if (backToTopButton) {
+            if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
+                backToTopButton.style.display = "block";
+            } else {
+                backToTopButton.style.display = "none";
+            }
+        }
+
+        // Navbar Highlight Logic
+        // Guard clause: If no sections are found (e.g., on blog page), do not attempt to highlight scroll sections
+        if (sections.length === 0) return;
+
         let current = '';
         sections.forEach(section => {
             const sectionTop = section.offsetTop;
@@ -46,11 +60,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
         navLinks.forEach(link => {
             link.classList.remove('active');
-            if (link.getAttribute('href').includes(current)) {
+            // Check if 'current' is not empty to avoid matching all links with includes('')
+            if (current && link.getAttribute('href').includes(current)) {
                 link.classList.add('active');
             }
         });
     });
+
+    // Back to Top Click Event
+    if (backToTopButton) {
+        backToTopButton.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+    }
 
     // Hamburger Menu Toggle
     const hamburger = document.querySelector('.hamburger');
@@ -71,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Close menu when clicking a link
-        document.querySelectorAll('.nav-link').forEach(link => {
+        navLinks.forEach(link => { // Use navLinks directly here since it's already selected
             link.addEventListener('click', () => {
                 navMenu.classList.remove('active');
                 const icon = hamburger.querySelector('i');

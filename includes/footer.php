@@ -23,3 +23,6 @@
             </div>
         </div>
     </footer>
+
+    <!-- Back to Top Button -->
+     <button id="backToTop" title="Go to top"><i class="fas fa-arrow-up"></i></button>
