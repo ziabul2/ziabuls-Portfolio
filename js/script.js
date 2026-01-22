@@ -6,14 +6,13 @@ document.addEventListener('DOMContentLoaded', () => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
                 entry.target.classList.add('visible');
-                // Optional: Stop observing once revealed
                 revealObserver.unobserve(entry.target);
             }
         });
     }, { threshold: 0.1 });
 
     revealElements.forEach(el => {
-        el.classList.add('reveal-item'); // Add base class for CSS
+        el.classList.add('reveal-item');
         revealObserver.observe(el);
     });
 
@@ -30,21 +29,44 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // Navbar active state on scroll
+    // Get references
     const sections = document.querySelectorAll('section');
     const navLinks = document.querySelectorAll('.nav-link');
     const backToTopButton = document.getElementById("backToTop");
 
-    window.addEventListener('scroll', () => {
-        // Back to Top Button Logic
-        if (backToTopButton) {
-            if (document.body.scrollTop > 200 || document.documentElement.scrollTop > 200) {
-                backToTopButton.style.display = "block";
+    // Back to Top Button Setup
+    if (backToTopButton) {
+        // Show/hide on scroll
+        window.addEventListener('scroll', function() {
+            if (document.documentElement.scrollTop > 200 || document.body.scrollTop > 200) {
+                backToTopButton.style.display = "flex";
             } else {
                 backToTopButton.style.display = "none";
             }
-        }
+        });
 
+        // Click to scroll top
+        backToTopButton.addEventListener('click', function() {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Hover effects
+        backToTopButton.addEventListener('mouseover', function() {
+            this.style.transform = 'scale(1.1)';
+            this.style.filter = 'brightness(1.2)';
+        });
+
+        backToTopButton.addEventListener('mouseout', function() {
+            this.style.transform = 'scale(1)';
+            this.style.filter = 'brightness(1)';
+        });
+    }
+
+    // Navbar active state on scroll
+    window.addEventListener('scroll', () => {
         // Navbar Highlight Logic
         // Guard clause: If no sections are found (e.g., on blog page), do not attempt to highlight scroll sections
         if (sections.length === 0) return;
@@ -60,22 +82,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
         navLinks.forEach(link => {
             link.classList.remove('active');
-            // Check if 'current' is not empty to avoid matching all links with includes('')
             if (current && link.getAttribute('href').includes(current)) {
                 link.classList.add('active');
             }
         });
     });
-
-    // Back to Top Click Event
-    if (backToTopButton) {
-        backToTopButton.addEventListener('click', () => {
-            window.scrollTo({
-                top: 0,
-                behavior: 'smooth'
-            });
-        });
-    }
 
     // Hamburger Menu Toggle
     const hamburger = document.querySelector('.hamburger');
@@ -84,7 +95,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (hamburger && navMenu) {
         hamburger.addEventListener('click', () => {
             navMenu.classList.toggle('active');
-            // Toggle icon between bars and times
             const icon = hamburger.querySelector('i');
             if (navMenu.classList.contains('active')) {
                 icon.classList.remove('fa-bars');
@@ -95,8 +105,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Close menu when clicking a link
-        navLinks.forEach(link => { // Use navLinks directly here since it's already selected
+        navLinks.forEach(link => {
             link.addEventListener('click', () => {
                 navMenu.classList.remove('active');
                 const icon = hamburger.querySelector('i');

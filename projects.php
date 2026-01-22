@@ -168,6 +168,9 @@
         </div>
     </footer>
 
+    <!-- Back to Top Button -->
+    <button id="backToTop" title="Go to top" style="display: none; position: fixed; bottom: 30px; right: 30px; z-index: 10000; border: none; outline: none; background-color: var(--primary-color); color: white; cursor: pointer; padding: 15px; border-radius: 50%; font-size: 18px; transition: all 0.3s ease; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3); opacity: 1; width: 50px; height: 50px; display: flex; align-items: center; justify-content: center;"><i class="fas fa-arrow-up"></i></button>
+
     <!-- JS -->
     <script src="js/script.js"></script>
 </body>

@@ -118,5 +118,148 @@ class BackupManager {
         // Copy backup to main file
         return copy($backupPath, $this->filePath);
     }
+
+    /**
+     * Deletes a specific backup file.
+     * @param string $filename The basename of the backup file.
+     * @return bool True on success, false on failure.
+     */
+    public function deleteBackup($filename) {
+        $backupPath = $this->backupDir . basename($filename);
+        
+        if (!file_exists($backupPath)) {
+            return false;
+        }
+
+        return unlink($backupPath);
+    }
+
+    /**
+     * Exports a backup file for download.
+     * @param string $filename The basename of the backup file.
+     * @return array|false Array with 'path' and 'filename' on success, false on failure.
+     */
+    public function exportBackup($filename) {
+        $backupPath = $this->backupDir . basename($filename);
+        
+        if (!file_exists($backupPath)) {
+            return false;
+        }
+
+        return [
+            'path' => $backupPath,
+            'filename' => basename($filename)
+        ];
+    }
+
+    /**
+     * Imports a backup file from an uploaded file.
+     * @param array $uploadedFile The $_FILES array element.
+     * @return string|false The backup filename on success, false on failure.
+     */
+    public function importBackup($uploadedFile) {
+        if (!isset($uploadedFile) || $uploadedFile['error'] !== UPLOAD_ERR_OK) {
+            return false;
+        }
+
+        // Validate JSON format
+        $content = file_get_contents($uploadedFile['tmp_name']);
+        if (json_decode($content, true) === null) {
+            return false; // Invalid JSON
+        }
+
+        // Generate a timestamped filename
+        $timestamp = date('Y-m-d_H-i-s');
+        $filename = 'portfolio_imported_' . $timestamp . '.json';
+        $backupPath = $this->backupDir . $filename;
+
+        if (move_uploaded_file($uploadedFile['tmp_name'], $backupPath)) {
+            return $filename;
+        }
+
+        return false;
+    }
+
+    /**
+     * Gets statistics about backups.
+     * @return array Statistics including count, total size, oldest, newest.
+     */
+    public function getBackupStats() {
+        $backups = $this->getBackups();
+        
+        $totalSize = 0;
+        $oldest = null;
+        $newest = null;
+
+        foreach ($backups as $backup) {
+            $totalSize += $backup['size'];
+            if ($oldest === null) {
+                $oldest = $backup;
+            }
+            if ($newest === null) {
+                $newest = $backup;
+            }
+        }
+
+        return [
+            'count' => count($backups),
+            'total_size' => $totalSize,
+            'total_size_readable' => $this->formatBytes($totalSize),
+            'oldest' => $oldest,
+            'newest' => $newest
+        ];
+    }
+
+    /**
+     * Formats bytes into human-readable format.
+     * @param int $bytes The number of bytes.
+     * @return string Formatted size string.
+     */
+    private function formatBytes($bytes) {
+        $units = ['B', 'KB', 'MB', 'GB'];
+        $bytes = max($bytes, 0);
+        $pow = floor(($bytes ? log($bytes) : 0) / log(1024));
+        $pow = min($pow, count($units) - 1);
+        $bytes /= (1 << (10 * $pow));
+
+        return round($bytes, 2) . ' ' . $units[$pow];
+    }
+
+    /**
+     * Gets detailed information about a specific backup.
+     * @param string $filename The basename of the backup file.
+     * @return array|false Backup details or false if not found.
+     */
+    public function getBackupDetails($filename) {
+        $backups = $this->getBackups();
+        foreach ($backups as $backup) {
+            if ($backup['filename'] === $filename) {
+                $backup['size_readable'] = $this->formatBytes($backup['size']);
+                $backup['created_readable'] = date('Y-m-d H:i:s', $backup['created']);
+                return $backup;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Cleans up old backups, keeping only the latest N backups.
+     * @param int $keepCount Number of backups to keep.
+     * @return int Number of backups deleted.
+     */
+    public function cleanupOldBackups($keepCount = 10) {
+        $backups = $this->getBackups();
+        $deleted = 0;
+
+        if (count($backups) > $keepCount) {
+            for ($i = $keepCount; $i < count($backups); $i++) {
+                if (unlink($backups[$i]['path'])) {
+                    $deleted++;
+                }
+            }
+        }
+
+        return $deleted;
+    }
 }
 ?>
