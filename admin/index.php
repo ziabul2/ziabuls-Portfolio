@@ -13,7 +13,7 @@ foreach ($data['skills_section']['categories'] ?? [] as $cat) {
 ?>
 
 <div class="welcome-section" style="margin-bottom: 30px;">
-    <h1>Welcome back, <?php echo htmlspecialchars($_SESSION['user']); ?>!</h1>
+    <h1>Welcome back, <?php echo htmlspecialchars($_SESSION['admin_data']['display_name'] ?? $_SESSION['admin_data']['username'] ?? 'Admin'); ?>!</h1>
     <p>Manage your portfolio content from here.</p>
 </div>
 
@@ -80,6 +80,16 @@ foreach ($data['skills_section']['categories'] ?? [] as $cat) {
         <p>Manage your portfolio data backups and restore previous versions.</p>
         <div style="margin-top:20px;">
             <a href="manage-backups.php" class="btn-edit">Manage Backups</a>
+        </div>
+    </div>
+
+    <div class="stat-card" style="background: linear-gradient(135deg, rgba(199, 120, 221, 0.1), rgba(0, 255, 157, 0.1)); border-color: #c778dd;">
+        <h3><i class="fas fa-database"></i> Database Manager</h3>
+        <p>Connection switching, migration wizard, and SQL tools.</p>
+        <div style="margin-top:20px; display: flex; gap: 10px; flex-wrap: wrap;">
+            <a href="database-config.php" class="btn-edit"><i class="fas fa-plug"></i> Connections</a>
+            <a href="database-tables.php" class="btn-edit"><i class="fas fa-table"></i> Tables</a>
+            <a href="database-tools.php" class="btn-edit"><i class="fas fa-tools"></i> Tools & Migration</a>
         </div>
     </div>
 </div>

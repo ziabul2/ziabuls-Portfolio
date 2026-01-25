@@ -3,6 +3,10 @@
  * Admin Panel Functions
  */
 
+// Set Timezone for Bangladesh (User Request)
+date_default_timezone_set('Asia/Dhaka');
+
+
 /**
  * Returns the path to the portfolio data file
  */
@@ -36,6 +40,13 @@ function savePortfolioData($data) {
     $filePath = getPortfolioFilePath();
     $backupManager = new BackupManager($filePath);
     
+    // 1. Auto-Backup BEFORE saving (Professional Safety)
+    $backupManager->createAutoBackup();
+    
+    // 2. Cleanup Old Backups (Retention Policy: Keep last 20)
+    $backupManager->cleanupOldBackups(20);
+    
+    // 3. Save Data potentially using BackupManager's safe save (which also does a temp backup internally usually, but we made it explicit)
     return $backupManager->saveSafely($data);
 }
 

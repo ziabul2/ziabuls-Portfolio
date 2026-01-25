@@ -1,0 +1,117 @@
+<!-- 
+  ADMIN WORKFLOW - QUICK START TEMPLATE
+  Copy this template to create new edit pages with full workflow support
+  Replace SECTION_NAME with actual section name (hero, skills, projects, etc.)
+-->
+
+<?php
+require_once __DIR__ . '/includes/header.php';
+
+// Load current data
+$data = getPortfolioData();
+$flash = getFlashMessage();
+?>
+
+<div class="section-header">
+    <h1>Edit SECTION_NAME</h1>
+    <a href="index.php" class="btn-edit"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+</div>
+
+<!-- Flash message from page reload -->
+<?php if ($flash): ?>
+    <div class="<?php echo htmlspecialchars($flash['type']); ?>-msg">
+        ✓ <?php echo htmlspecialchars($flash['message']); ?>
+        <?php if (isset($flash['backup'])): ?>
+            <br><small>Backup: <?php echo htmlspecialchars($flash['backup']); ?></small>
+        <?php endif; ?>
+    </div>
+<?php endif; ?>
+
+<!-- Main form with workflow integration -->
+<form id="edit-form" data-section="SECTION_NAME" method="POST">
+    
+    <!-- SECTION 1: Form fields -->
+    <div class="editor-card">
+        <h2>SECTION_NAME Section</h2>
+        
+        <!-- Example field with validation -->
+        <div class="form-group">
+            <label for="field_name">Field Label *</label>
+            <input 
+                type="text" 
+                id="field_name" 
+                name="field_name" 
+                value="<?php echo htmlspecialchars($data['SECTION_NAME']['field_name'] ?? ''); ?>"
+                required
+                data-validate="required|max:100"
+                placeholder="Enter field value"
+            >
+            <span class="error-msg" data-field="field_name"></span>
+            <small>Hint: Keep under 100 characters</small>
+        </div>
+        
+        <!-- Example textarea with validation -->
+        <div class="form-group">
+            <label for="field_description">Description *</label>
+            <textarea 
+                id="field_description" 
+                name="field_description" 
+                required
+                data-validate="required|max:500"
+                placeholder="Enter description"
+            ><?php echo htmlspecialchars($data['SECTION_NAME']['field_description'] ?? ''); ?></textarea>
+            <span class="error-msg" data-field="field_description"></span>
+            <small><span id="char_count">0</span>/500 characters</small>
+        </div>
+        
+        <!-- Example select field -->
+        <div class="form-group">
+            <label for="field_select">Category</label>
+            <select id="field_select" name="field_select">
+                <option value="">-- Select --</option>
+                <option value="option1" <?php echo ($data['SECTION_NAME']['field_select'] ?? '') === 'option1' ? 'selected' : ''; ?>>Option 1</option>
+                <option value="option2" <?php echo ($data['SECTION_NAME']['field_select'] ?? '') === 'option2' ? 'selected' : ''; ?>>Option 2</option>
+            </select>
+            <span class="error-msg" data-field="field_select"></span>
+        </div>
+    </div>
+    
+    <!-- SECTION 2: Status and feedback area -->
+    <div id="status-message" class="hidden"></div>
+    
+    <!-- SECTION 3: Form actions -->
+    <div class="form-actions">
+        <button type="submit" id="save-btn" class="btn-primary">
+            <i class="fas fa-save"></i> Save Changes
+        </button>
+        <button type="reset" id="reset-btn" class="btn-secondary">
+            <i class="fas fa-redo"></i> Reset Form
+        </button>
+        <a href="index.php" class="btn-secondary">
+            <i class="fas fa-times"></i> Cancel
+        </a>
+    </div>
+</form>
+
+<?php require_once __DIR__ . '/includes/footer.php'; ?>
+
+<!-- Workflow JavaScript -->
+<script src="js/workflow.js"></script>
+
+<!-- Page-specific enhancements (optional) -->
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Character counter for textarea
+        const descField = document.getElementById('field_description');
+        const charCount = document.getElementById('char_count');
+        
+        if (descField && charCount) {
+            const updateCount = () => {
+                charCount.textContent = descField.value.length;
+            };
+            
+            descField.addEventListener('input', updateCount);
+            updateCount(); // Set initial count
+        }
+    });
+</script>

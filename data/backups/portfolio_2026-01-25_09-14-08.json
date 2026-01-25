@@ -1,0 +1,226 @@
+{
+    "seo": {
+        "title": "ZIMBABU | Full Stack Developer",
+        "favicon": "assets/ziabul islam - non bg.png",
+        "stylesheets": [
+            "css/style.css",
+            "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        ]
+    },
+    "admin_settings": {
+        "title": "Admin Dashboard",
+        "header_text": "admin-panel",
+        "footer_text": "ZIMBABU Admin Panel",
+        "favicon": "assets/ziabul islam - non bg.png"
+    },
+    "social_links": [
+        {
+            "platform": "github",
+            "url": "https://github.com/ziabul2",
+            "icon": "fab fa-github"
+        },
+        {
+            "platform": "facebook",
+            "url": "https://www.facebook.com/ziabul123",
+            "icon": "fab fa-facebook"
+        },
+        {
+            "platform": "hackerrank",
+            "url": "https://www.hackerrank.com/profile/ziabul",
+            "icon": "fab fa-hackerrank"
+        },
+        {
+            "platform": "linkedin",
+            "url": "https://www.linkedin.com/in/md-ziabul-islam-zimbabu-14b5b21a3/",
+            "icon": "fab fa-linkedin"
+        }
+    ],
+    "hero": {
+        "name": "ZIABUL ISLAM",
+        "roles": [
+            "computer engineer",
+            "account manager"
+        ],
+        "description": "He crafts responsive websites where technologies meet creativity",
+        "contact_button_text": "Contact me !!",
+        "quote": "With great power comes great electricity bill",
+        "quote_author": "Dr. Who",
+        "image": "assets/ziabul islam - non bg.png",
+        "status_prefix": "Currently working on",
+        "status_highlight": "AI Development"
+    },
+    "projects_section": {
+        "title": "projects",
+        "view_all_text": "View all ~~>",
+        "view_all_link": "projects.php",
+        "items": [
+            {
+                "title": "My Portfolio Website",
+                "technologies": "PHP CSS MySQL",
+                "description": "Personal portfolio built with raw PHP and custom CSS.",
+                "link_text": "Live",
+                "link_url": "#",
+                "image": "assets/project1.png"
+            },
+            {
+                "title": "Accounts System",
+                "technologies": "Python Tkinter SQLite",
+                "description": "Automated accounting tool for Rangpur Eye Hospital.",
+                "link_text": "Cached",
+                "link_url": "#",
+                "image": "assets/project2.png"
+            },
+            {
+                "title": "Network Setup",
+                "technologies": "Cisco Packet Tracer",
+                "description": "Hospital networking infrastructure setup and management.",
+                "link_text": "View",
+                "link_url": "#",
+                "image": "assets/project3.png"
+            }
+        ]
+    },
+    "skills_section": {
+        "title": "skills",
+        "categories": [
+            {
+                "name": "Languages",
+                "items": [
+                    "JavaScript",
+                    "Python",
+                    "PHP"
+                ]
+            },
+            {
+                "name": "Databases",
+                "items": [
+                    "SQLite",
+                    "PostgreSQL",
+                    "Mongo"
+                ]
+            },
+            {
+                "name": "Tools",
+                "items": [
+                    "VSCode",
+                    "Figma",
+                    "Git",
+                    "Font Awesome"
+                ]
+            },
+            {
+                "name": "Other",
+                "items": [
+                    "HTML",
+                    "CSS",
+                    "EJS",
+                    "SCSS",
+                    "REST"
+                ]
+            },
+            {
+                "name": "Frameworks",
+                "items": [
+                    "React",
+                    "Flask",
+                    "Django",
+                    "Laravel"
+                ]
+            },
+            {
+                "name": "AI",
+                "items": [
+                    "Setup AI",
+                    "Train Data",
+                    "Convert into model."
+                ]
+            }
+        ]
+    },
+    "about_section": {
+        "title": "about-me",
+        "intro": "Hello, i\u2019m Ziabul Islam!",
+        "paragraphs": [
+            "I\u2019m a self-taught computer engineer based in Rangpur, Bangladesh. I can develop responsive websites from scratch and raise them into modern user-friendly web experiences.",
+            "Transforming my creativity and knowledge into wwebsites has been my passion for over a year. I have been helping various clients to establish their presence online. I always strive to learn about the newest technologies and frameworks."
+        ],
+        "button_text": "Read more ->",
+        "button_link": "#",
+        "image": "assets/ziabul islam - non bg.png"
+    },
+    "contact_section": {
+        "title": "contacts",
+        "intro": "I\u2019m interested in freelance opportunities. However, if you have other request or question, don\u2019t hesitate to contact me",
+        "message_title": "Message me here",
+        "phone": "01581205088",
+        "email": "ziabul@duck.com",
+        "email_button_text": "Email Now"
+    },
+    "footer": {
+        "logo_text": "ZIABUL ISLAM",
+        "role": "Computer Engineer",
+        "email": "ziabul@duck.com",
+        "media_title": "Media",
+        "copyright_text": "Made by Ziabul Islam"
+    },
+    "blog_section": {
+        "title": "LATEST NEWS",
+        "view_all_text": "View all ~~&gt;",
+        "view_all_link": "blog.php"
+    },
+    "blog_posts": [
+        {
+            "id": "01",
+            "title": "Demo post",
+            "summary": "Test proj",
+            "content": "<h1>Hello Everyone</h1>\r\nwelcome :)",
+            "date": "2026-01-22",
+            "image": "assets/Twitter.svg",
+            "status": "published"
+        },
+        {
+            "id": "2nd-post",
+            "title": "2nd post",
+            "summary": "demo 2",
+            "content": "none",
+            "date": "2026-01-22",
+            "image": "assets/project1.png",
+            "status": "published"
+        },
+        {
+            "id": "03",
+            "title": "future post",
+            "summary": "my future post with time",
+            "content": "<h1> hello Ziabul </h1>\r\nwelcome...",
+            "image": "assets/project1.png",
+            "video_url": "",
+            "status": "draft",
+            "date": "2026-01-25",
+            "publish_time": "09:12",
+            "seo_title": "",
+            "seo_desc": "",
+            "seo_tags": "",
+            "author_id": 1,
+            "published_at": "2026-01-25 09:12"
+        },
+        {
+            "id": "04",
+            "title": "demo 4 future post",
+            "summary": "aaccacac",
+            "content": "sdcscdsdvsdv",
+            "image": "assets/project1.png",
+            "video_url": "",
+            "status": "published",
+            "date": "2026-01-25",
+            "publish_time": "09:14",
+            "seo_title": "",
+            "seo_desc": "",
+            "seo_tags": "",
+            "author_id": 1,
+            "published_at": "2026-01-25 09:14"
+        }
+    ],
+    "profile": {
+        "name": "Test User 1769070971"
+    }
+}

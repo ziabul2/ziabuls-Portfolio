@@ -36,14 +36,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         header('Location: manage-backups.php');
         exit;
-    } elseif ($action === 'cleanup') {
-        $keepCount = (int)($_POST['keep_count'] ?? 10);
+    } elseif ($action === 'export_all') {
         $filePath = getPortfolioFilePath();
         $backupManager = new BackupManager($filePath);
-        $deleted = $backupManager->cleanupOldBackups($keepCount);
-        setFlashMessage("Cleanup complete! Deleted $deleted old backup(s).", 'success');
-        header('Location: manage-backups.php');
-        exit;
+        $zipFile = $backupManager->exportAllBackups(); // Need to implement this in BackupManager or inline here
+        
+        if ($zipFile && file_exists($zipFile)) {
+            header('Content-Type: application/zip');
+            header('Content-Disposition: attachment; filename="all_backups_' . date('Y-m-d') . '.zip"');
+            header('Content-Length: ' . filesize($zipFile));
+            readfile($zipFile);
+            unlink($zipFile); // Delete after download
+            exit;
+        } else {
+            setFlashMessage('Failed to create ZIP archive. Extension might be missing.', 'error');
+            header('Location: manage-backups.php');
+            exit;
+        }
     }
 }
 
@@ -54,12 +63,32 @@ $flash = getFlashMessage();
 $filePath = getPortfolioFilePath();
 $backupManager = new BackupManager($filePath);
 $backups = $backupManager->getBackups();
+
+// Enrich backups with content stats (efficiently)
+foreach ($backups as &$backup) {
+    // Read JSON content to get counts
+    // Use true associative array
+    $content = json_decode(file_get_contents($backup['path']), true);
+    $backup['stats'] = [
+        'posts' => count($content['blog_posts'] ?? []),
+        'projects' => count($content['projects'] ?? []),
+        'theme' => $content['theme']['primary_color'] ?? 'N/A',
+        'last_updated' => date('Y-m-d H:i', $backup['created']) // fallback to file time
+    ];
+}
+unset($backup); // Break reference
+
 $stats = $backupManager->getBackupStats();
 ?>
 
 <div class="backup-header" style="margin-bottom: 40px;">
-    <h1><i class="fas fa-save"></i> Backup Management</h1>
-    <p>Manage your portfolio data backups, restore previous versions, and import/export backups.</p>
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+        <div>
+            <h1><i class="fas fa-save"></i> Backup Management</h1>
+            <p>Manage your portfolio data backups, restore previous versions, and import/export backups.</p>
+        </div>
+        <a href="index.php" class="btn-edit"><i class="fas fa-arrow-left"></i> Back to Dashboard</a>
+    </div>
 </div>
 
 <?php if ($flash): ?>
@@ -70,45 +99,68 @@ $stats = $backupManager->getBackupStats();
 <?php endif; ?>
 
 <!-- Stats Cards -->
-<div class="backup-stats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 20px; margin-bottom: 40px;">
-    <div class="stat-card" style="border-left: 5px solid var(--success-color);">
-        <h4><i class="fas fa-database"></i> Total Backups</h4>
-        <p style="font-size: 28px; color: var(--success-color); font-weight: bold; margin: 10px 0;">
-            <?php echo $stats['count']; ?>
-        </p>
-        <small>Backup(s) available</small>
+<!-- System Health & Stats Dashboard -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-bottom: 40px;">
+    
+    <!-- Health Card -->
+    <div class="stat-card" style="border-left: 5px solid <?php echo $stats['count'] > 0 ? 'var(--success-color)' : 'var(--error-color)'; ?>;">
+        <h4><i class="fas fa-heartbeat"></i> System Health</h4>
+        <div style="margin-top:15px; font-size:0.9em; line-height:1.8;">
+            <div style="display:flex; justify-content:space-between;">
+                <span>PHP Version:</span>
+                <strong style="color:#fff;"><?php echo phpversion(); ?></strong>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+                <span>JSON Writable:</span>
+                <?php if(is_writable($filePath)): ?>
+                    <span style="color:var(--success-color);"><i class="fas fa-check"></i> Yes</span>
+                <?php else: ?>
+                    <span style="color:var(--error-color);"><i class="fas fa-times"></i> No</span>
+                <?php endif; ?>
+            </div>
+            <div style="display:flex; justify-content:space-between;">
+                <span>Disk Free:</span>
+                <strong style="color:#61afef;"><?php echo round(disk_free_space('.') / 1024 / 1024 / 1024, 2); ?> GB</strong>
+            </div>
+        </div>
     </div>
 
+    <!-- Storage Card -->
     <div class="stat-card" style="border-left: 5px solid var(--accent-color);">
-        <h4><i class="fas fa-hdd"></i> Total Size</h4>
-        <p style="font-size: 28px; color: var(--accent-color); font-weight: bold; margin: 10px 0;">
-            <?php echo $stats['total_size_readable']; ?>
-        </p>
-        <small>Combined size of all backups</small>
+        <h4><i class="fas fa-hdd"></i> Backup Storage</h4>
+        <div style="margin-top:12px; display:flex; align-items:flex-end; gap:10px;">
+            <span style="font-size:32px; font-weight:bold; color:var(--accent-color);"><?php echo $stats['count']; ?></span>
+            <span style="margin-bottom:6px; color:#aaa;">files</span>
+        </div>
+        <div style="margin-top:5px; font-size:0.9em; color:#888;">
+            Total Size: <strong style="color:#fff"><?php echo $stats['total_size_readable']; ?></strong>
+        </div>
+         <div style="margin-top:10px; font-size:0.8em; color:#666;">
+            Policy: Retains last 20 backups
+        </div>
     </div>
 
-    <div class="stat-card" style="border-left: 5px solid #61afef;">
-        <h4><i class="fas fa-file-import"></i> Latest Backup</h4>
-        <p style="font-size: 16px; color: #61afef; font-weight: bold; margin: 10px 0;">
+    <!-- Latest Activity -->
+    <div class="stat-card" style="border-left: 5px solid #e06c75;">
+        <h4><i class="fas fa-history"></i> Last Activity</h4>
+        <div style="margin-top:15px;">
+            <div style="margin-bottom:5px; color:#aaa; font-size:0.9em;">Most Recent Backup:</div>
             <?php if ($stats['newest']): ?>
-                <small><?php echo date('M d, Y H:i', $stats['newest']['created']); ?></small>
+                <strong style="color:#fff; font-size:1.1em;">
+                    <?php 
+                        // Auto-detection logic via filename
+                        $isAuto = strpos($stats['newest']['filename'], 'auto_') !== false;
+                        echo $isAuto ? '<i class="fas fa-robot" title="Auto-Generated"></i> ' : '<i class="fas fa-user" title="Manual"></i> ';
+                        echo date('M d, Y - H:i:s', $stats['newest']['created']); 
+                    ?>
+                </strong>
+                <div style="font-size:0.85em; color:var(--success-color); margin-top:5px;">
+                    <i class="fas fa-check-circle"></i> System Active
+                </div>
             <?php else: ?>
-                <small>No backups</small>
+                <span style="color:#fc5c65;">No backups found</span>
             <?php endif; ?>
-        </p>
-        <small>Most recent backup</small>
-    </div>
-
-    <div class="stat-card" style="border-left: 5px solid #98c379;">
-        <h4><i class="fas fa-history"></i> Oldest Backup</h4>
-        <p style="font-size: 16px; color: #98c379; font-weight: bold; margin: 10px 0;">
-            <?php if ($stats['oldest']): ?>
-                <small><?php echo date('M d, Y H:i', $stats['oldest']['created']); ?></small>
-            <?php else: ?>
-                <small>N/A</small>
-            <?php endif; ?>
-        </p>
-        <small>First backup on record</small>
+        </div>
     </div>
 </div>
 
@@ -124,6 +176,10 @@ $stats = $backupManager->getBackupStats();
 
     <button onclick="document.getElementById('cleanupModal').style.display='block'" class="btn-add" style="background: #61afef;">
         <i class="fas fa-broom"></i> Cleanup Old Backups
+    </button>
+    
+    <button onclick="location.href='manage-backups.php?action=export_all'" class="btn-add" style="background: #e06c75;">
+        <i class="fas fa-file-archive"></i> Export All (ZIP)
     </button>
 </div>
 
@@ -189,7 +245,11 @@ if ($action === 'create_backup') {
                                     </button>
                                 </form>
 
-                                <button onclick="showBackupDetails('<?php echo htmlspecialchars($backup['filename']); ?>')" class="btn-action" style="background: #61afef; color: white; padding: 6px 12px; border: none; border-radius: 3px; cursor: pointer; margin: 2px; transition: 0.2s;" title="View backup details">
+                                    <button onclick="showBackupDetails('<?php echo htmlspecialchars($backup['filename']); ?>', this)" 
+                                            data-posts="<?php echo $backup['stats']['posts']; ?>"
+                                            data-projects="<?php echo $backup['stats']['projects']; ?>"
+                                            data-theme="<?php echo htmlspecialchars($backup['stats']['theme']); ?>"
+                                            class="btn-action" style="background: #61afef; color: white; padding: 6px 12px; border: none; border-radius: 3px; cursor: pointer; margin: 2px; transition: 0.2s;" title="View backup details">
                                     <i class="fas fa-eye"></i> View
                                 </button>
 
@@ -307,7 +367,7 @@ if ($action === 'download' && $filename) {
 ?>
 
 <script>
-function showBackupDetails(filename) {
+function showBackupDetails(filename, button) {
     // Parse filename to extract datetime
     let cleanName = filename.replace('.json', '').replace('portfolio_', '').replace('_', ' ');
     
@@ -340,16 +400,44 @@ function showBackupDetails(filename) {
     }
     
     // Show simple, human-readable info
+    // Show detailed content info
+    const postCount = button.getAttribute('data-posts');
+    const projCount = button.getAttribute('data-projects');
+    const themeColor = button.getAttribute('data-theme');
+    
     document.getElementById('detailsContent').innerHTML = `
-        <div style="display: grid; grid-template-columns: 120px 1fr; gap: 15px;">
-            <strong style="color: var(--accent-color);">Filename:</strong>
-            <span style="word-break: break-all; font-family: 'Courier New', monospace; background: #2c3e50; padding: 8px; border-radius: 3px;">${filename}</span>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            <div>
+                <h4 style="border-bottom:1px solid #444; padding-bottom:10px; margin-bottom:15px; color:var(--accent-color);">File Information</h4>
+                <div style="display: grid; grid-template-columns: 100px 1fr; gap: 10px; margin-bottom:5px;">
+                    <strong style="color: #999;">Filename:</strong>
+                    <span style="word-break: break-all; font-family: monospace; background: #222; padding: 2px 5px; border-radius: 3px;">${filename}</span>
+                </div>
+                <div style="display: grid; grid-template-columns: 100px 1fr; gap: 10px; margin-bottom:5px;">
+                    <strong style="color: #999;">Created:</strong>
+                    <span>${readableDate}</span>
+                </div>
+                 <div style="display: grid; grid-template-columns: 100px 1fr; gap: 10px; margin-bottom:5px;">
+                    <strong style="color: #999;">Status:</strong>
+                    <span style="color:var(--success-color);"><i class="fas fa-check-circle"></i> Available</span>
+                </div>
+            </div>
             
-            <strong style="color: var(--accent-color);">Created:</strong>
-            <span>${readableDate || 'Unknown'}</span>
-            
-            <strong style="color: var(--accent-color);">Status:</strong>
-            <span><i class="fas fa-check-circle" style="color: var(--success-color);"></i> Available</span>
+            <div>
+                <h4 style="border-bottom:1px solid #444; padding-bottom:10px; margin-bottom:15px; color:#61afef;">Content Snapshot</h4>
+                <div style="display: grid; grid-template-columns: 120px 1fr; gap: 10px; margin-bottom:5px;">
+                    <strong style="color: #999;">Blog Posts:</strong>
+                    <strong>${postCount}</strong>
+                </div>
+                 <div style="display: grid; grid-template-columns: 120px 1fr; gap: 10px; margin-bottom:5px;">
+                    <strong style="color: #999;">Projects:</strong>
+                    <strong>${projCount}</strong>
+                </div>
+                 <div style="display: grid; grid-template-columns: 120px 1fr; gap: 10px; margin-bottom:5px;">
+                    <strong style="color: #999;">Primary Theme:</strong>
+                    <span style="display:inline-block; width:12px; height:12px; background:${themeColor}; border-radius:50%; margin-right:5px;"></span> ${themeColor}
+                </div>
+            </div>
         </div>
     `;
     document.getElementById('detailsModal').style.display = 'block';

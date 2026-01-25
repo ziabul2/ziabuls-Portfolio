@@ -9,15 +9,18 @@
             
             <div class="project-grid">
                 <?php 
-                $published_posts = array_filter($data['blog_posts'], function($post) {
-                    return isset($post['status']) && $post['status'] === 'published';
-                });
-                // Sort by date descending
-                usort($published_posts, function($a, $b) {
-                    return strtotime($b['date']) - strtotime($a['date']);
-                });
-                // Take top 3
-                $latest_posts = array_slice($published_posts, 0, 3);
+                // Fetch latest published posts (Hybrid: JSON Primary)
+                try {
+                    require_once __DIR__ . '/../helpers/BlogManager.php';
+                    $blogManager = BlogManager::getInstance();
+                    $all_posts = $blogManager->getPosts(['status' => 'published']);
+                    
+                    // Slice first 3
+                    $latest_posts = array_slice($all_posts, 0, 3);
+                } catch (Exception $e) {
+                    error_log('Error fetching blog posts for homepage: ' . $e->getMessage());
+                    $latest_posts = [];
+                }
                 
                 if (empty($latest_posts)): ?>
                     <p style="color: #666; font-style: italic;">No blog posts available yet.</p>
@@ -28,7 +31,12 @@
                         <div class="project-img">
                             <img src="<?php echo htmlspecialchars($post['image']); ?>" alt="<?php echo htmlspecialchars($post['title']); ?>">
                         </div>
-                        <div class="project-tech"><?php echo htmlspecialchars($post['date']); ?></div>
+                        <div class="project-tech">
+                            <?php 
+                            $dateStr = $post['published_at'] ?? ($post['date'] . ' ' . ($post['publish_time'] ?? '')) ?? $post['created_at'] ?? 'now';
+                            echo date('M d, Y \a\t g:i A', strtotime($dateStr)); 
+                            ?>
+                        </div>
                         <div class="project-content">
                             <h3><?php echo htmlspecialchars($post['title']); ?></h3>
                             <p><?php echo htmlspecialchars($post['summary']); ?></p>

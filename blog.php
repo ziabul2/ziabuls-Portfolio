@@ -1,7 +1,17 @@
 <?php
-// Load portfolio data
+/**
+ * Updated blog.php - Fetches blog posts from MySQL database
+ */
+// Load portfolio data for static sections (hero, navbar, footer, etc.)
 require_once __DIR__ . '/helpers/data_loader.php';
+require_once __DIR__ . '/helpers/DatabaseManager.php';
+
 $data = loadPortfolioData();
+
+// Fetch blog posts via BlogManager (Hybrid: JSON Primary)
+require_once __DIR__ . '/helpers/BlogManager.php';
+$blogManager = BlogManager::getInstance();
+$blog_posts = $blogManager->getPosts(['status' => 'published']);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -17,23 +27,15 @@ $data = loadPortfolioData();
     </div>
 
     <div class="project-grid">
-        <?php 
-        $published_posts = array_filter($data['blog_posts'], function($post) {
-            return isset($post['status']) && $post['status'] === 'published';
-        });
-        usort($published_posts, function($a, $b) {
-            return strtotime($b['date']) - strtotime($a['date']);
-        });
-        
-        if (empty($published_posts)): ?>
+        <?php if (empty($blog_posts)): ?>
             <p style="color: #666; font-style: italic;">Stay tuned for new articles!</p>
         <?php else: ?>
-            <?php foreach ($published_posts as $post): ?>
+            <?php foreach ($blog_posts as $post): ?>
             <div class="project-card">
                 <div class="project-img">
                     <img src="<?php echo htmlspecialchars($post['image']); ?>" alt="<?php echo htmlspecialchars($post['title']); ?>">
                 </div>
-                <div class="project-tech"><?php echo htmlspecialchars($post['date']); ?></div>
+                <div class="project-tech"><?php echo date('M d, Y', strtotime($post['date'] ?? $post['created_at'] ?? 'now')); ?></div>
                 <div class="project-content">
                     <h3><?php echo htmlspecialchars($post['title']); ?></h3>
                     <p><?php echo htmlspecialchars($post['summary']); ?></p>

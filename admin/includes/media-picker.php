@@ -21,9 +21,18 @@
     </div>
 </div>
 
+<?php
+// Calculate Dynamic Web Root to avoid hardcoded /cv/
+$uploadScriptDir = str_replace('\\', '/', dirname($_SERVER['SCRIPT_NAME'])); // e.g., /cv/admin
+// Go up one level to get project root
+$projectRoot = dirname($uploadScriptDir); // e.g., /cv
+// Normalize and ensure trailing slash
+$webRoot = rtrim($projectRoot, '/') . '/'; 
+?>
 <script>
 let currentTargetInputId = '';
 let currentTargetPreviewId = '';
+const WEB_ROOT = "<?php echo $webRoot; ?>"; // Pass to JS
 
 function openMediaPicker(inputId, previewId) {
     currentTargetInputId = inputId;
@@ -58,9 +67,15 @@ function loadAssets() {
 }
 
 function selectAsset(assetPath) {
-    document.getElementById(currentTargetInputId).value = assetPath;
+    // Generate full path using dynamic WEB_ROOT
+    let fullPath = assetPath;
+    if (!assetPath.startsWith('/')) {
+        fullPath = WEB_ROOT + assetPath;
+    }
+    
+    document.getElementById(currentTargetInputId).value = fullPath;
     if (currentTargetPreviewId) {
-        document.getElementById(currentTargetPreviewId).src = '../' + assetPath;
+        document.getElementById(currentTargetPreviewId).src = fullPath;
     }
     closeMediaPicker();
 }

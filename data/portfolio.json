@@ -7,6 +7,12 @@
             "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
         ]
     },
+    "admin_settings": {
+        "title": "Admin Dashboard",
+        "header_text": "admin-panel",
+        "footer_text": "ZIMBABU Admin Panel",
+        "favicon": "assets/ziabul islam - non bg.png"
+    },
     "social_links": [
         {
             "platform": "github",
@@ -120,6 +126,14 @@
                     "Django",
                     "Laravel"
                 ]
+            },
+            {
+                "name": "AI",
+                "items": [
+                    "Setup AI",
+                    "Train Data",
+                    "Convert into model."
+                ]
             }
         ]
     },
@@ -172,6 +186,41 @@
             "date": "2026-01-22",
             "image": "assets/project1.png",
             "status": "published"
+        },
+        {
+            "id": "demo-4-autopost",
+            "title": "demo 4 autopost",
+            "summary": "autopost the text from admin",
+            "content": "hello world by zim",
+            "image": "/cv/assets/Figma.svg",
+            "video_url": "",
+            "status": "published",
+            "date": "2026-01-25",
+            "publish_time": "09:23",
+            "seo_title": "",
+            "seo_desc": "",
+            "seo_tags": "",
+            "author_id": 1,
+            "published_at": "2026-01-25 09:23"
+        },
+        {
+            "id": "03 - esdf",
+            "title": "esdf",
+            "summary": "sdfsdfsf",
+            "content": "sdfsdfsdfs",
+            "image": "assets/project1.png",
+            "video_url": "",
+            "status": "published",
+            "date": "2026-01-25",
+            "publish_time": "15:03",
+            "seo_title": "wefwef",
+            "seo_desc": "ewfwefw",
+            "seo_tags": "wef",
+            "footer_content": "by ziabul",
+            "author_url": "https://gravatar.com/dreamilyavenue565656b48d",
+            "show_author_card": "1",
+            "author_id": 1,
+            "published_at": "2026-01-25 15:03"
         }
     ],
     "profile": {
