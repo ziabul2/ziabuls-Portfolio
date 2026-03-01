@@ -58,9 +58,17 @@ function loadAssets() {
 }
 
 function selectAsset(assetPath) {
-    document.getElementById(currentTargetInputId).value = assetPath;
+    // Convert to root relative path if simpler strings returned
+    // Assuming assetPath is 'assets/filename.png'
+    // We want '/cv/assets/filename.png'
+    let fullPath = assetPath;
+    if (!assetPath.startsWith('/')) {
+        fullPath = '/cv/' + assetPath;
+    }
+    
+    document.getElementById(currentTargetInputId).value = fullPath;
     if (currentTargetPreviewId) {
-        document.getElementById(currentTargetPreviewId).src = '../' + assetPath;
+        document.getElementById(currentTargetPreviewId).src = fullPath;
     }
     closeMediaPicker();
 }

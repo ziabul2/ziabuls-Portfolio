@@ -243,23 +243,79 @@ class BackupManager {
     }
 
     /**
+     * Creates an AUTOMATIC timestamped backup.
+     * Use this for system-triggered backups (e.g. before save).
+     * @return string|false
+     */
+    public function createAutoBackup() {
+        if (!file_exists($this->filePath)) return false;
+        
+        $timestamp = date('Y-m-d_H-i-s');
+        $backupFile = $this->backupDir . 'auto_portfolio_' . $timestamp . '.json';
+        
+        if (copy($this->filePath, $backupFile)) {
+            return $backupFile;
+        }
+        return false;
+    }
+
+    /**
      * Cleans up old backups, keeping only the latest N backups.
+     * Differentiates between Manual and Auto if needed, but for now cleans globally by date.
      * @param int $keepCount Number of backups to keep.
      * @return int Number of backups deleted.
      */
     public function cleanupOldBackups($keepCount = 10) {
-        $backups = $this->getBackups();
+        $backups = $this->getBackups(); // Sorted new -> old
         $deleted = 0;
 
         if (count($backups) > $keepCount) {
-            for ($i = $keepCount; $i < count($backups); $i++) {
-                if (unlink($backups[$i]['path'])) {
+             // Keep the first $keepCount, delete the rest
+            $toDelete = array_slice($backups, $keepCount);
+            foreach ($toDelete as $backup) {
+                if ($this->deleteBackup($backup['filename'])) {
                     $deleted++;
                 }
             }
         }
-
         return $deleted;
+    }
+
+    /**
+     * Get System Health Info
+     */
+    /**
+     * Exports ALL backups as a ZIP file.
+     * @return string|false Path to ZIP file.
+     */
+    public function exportAllBackups() {
+        if (!class_exists('ZipArchive')) return false;
+
+        $zip = new ZipArchive();
+        $timestamp = date('Y-m-d_H-i-s');
+        $zipName = $this->backupDir . 'full_backup_' . $timestamp . '.zip';
+
+        if ($zip->open($zipName, ZipArchive::CREATE) !== TRUE) {
+            return false;
+        }
+
+        $files = glob($this->backupDir . 'portfolio_*.json');
+        // Include auto backups too if desired, usually 'auto_'
+        $autoFiles = glob($this->backupDir . 'auto_portfolio_*.json');
+        $allFiles = array_merge($files, $autoFiles);
+
+        if (empty($allFiles)) {
+             $zip->close();
+             return false;
+        }
+
+        foreach ($allFiles as $file) {
+            $zip->addFile($file, basename($file));
+        }
+
+        $zip->close();
+        
+        return file_exists($zipName) ? $zipName : false;
     }
 }
 ?>

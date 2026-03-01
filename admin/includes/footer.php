@@ -1,6 +1,9 @@
     </div>
+    <?php
+    $adminFooter = $portfolioData['admin_settings']['footer_text'] ?? 'ZIMBABU Admin Panel';
+    ?>
     <footer style="text-align:center; padding: 40px; color: #555; border-top: 1px solid #444; margin-top: 60px;">
-        <p>&copy; <?php echo date('Y'); ?> ZIMBABU Admin Panel. All rights reserved.</p>
+        <p>&copy; <?php echo date('Y'); ?> <?php echo htmlspecialchars($adminFooter); ?>. All rights reserved.</p>
         
         <!-- Navigation Buttons -->
         <div style="margin-top: 20px; display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;">
