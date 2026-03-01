@@ -15,6 +15,11 @@ if (!isset($data['achievements_section'])) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $token = $_POST['csrf_token'] ?? '';
+    if (!validateCSRFToken($token)) {
+        die('CSRF token validation failed.');
+    }
+
     $data['achievements_section'] = [
         'title' => sanitizeInput($_POST['title']),
         'view_all_text' => sanitizeInput($_POST['view_all_text']),
@@ -43,6 +48,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <div class="editor-card">
     <h3 style="margin-bottom: 20px;"><i class="fas fa-paint-brush"></i> Section Appearance</h3>
     <form method="POST">
+        <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
         <div class="form-group">
             <label>Section Title</label>
             <div style="display:flex; align-items:center;">

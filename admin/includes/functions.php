@@ -110,7 +110,66 @@ function sanitizeInput($data) {
 }
 
 /**
- * Handles file uploads to the assets directory
+ * Resizes and compresses an image to a maximum width to save space.
+ */
+function resizeAndCompressImage($sourcePath, $destinationPath, $maxWidth = 800, $quality = 85) {
+    $info = getimagesize($sourcePath);
+    if (!$info) return false;
+
+    list($width, $height) = $info;
+    $mime = $info['mime'];
+
+    // Don't upscale
+    if ($width > $maxWidth) {
+        $ratio = $maxWidth / $width;
+        $newWidth = $maxWidth;
+        $newHeight = (int)($height * $ratio);
+    } else {
+        $newWidth = $width;
+        $newHeight = $height;
+    }
+
+    $image = imagecreatetruecolor($newWidth, $newHeight);
+    
+    // Handle transparency for PNG/WEBP/GIF
+    if ($mime == 'image/png' || $mime == 'image/webp' || $mime == 'image/gif') {
+        imagealphablending($image, false);
+        imagesavealpha($image, true);
+        $transparent = imagecolorallocatealpha($image, 255, 255, 255, 127);
+        imagefilledrectangle($image, 0, 0, $newWidth, $newHeight, $transparent);
+    }
+
+    $source = null;
+    switch ($mime) {
+        case 'image/jpeg': $source = imagecreatefromjpeg($sourcePath); break;
+        case 'image/png': $source = imagecreatefrompng($sourcePath); break;
+        case 'image/webp': $source = imagecreatefromwebp($sourcePath); break;
+        case 'image/gif': $source = imagecreatefromgif($sourcePath); break;
+    }
+
+    if (!$source) return false;
+
+    imagecopyresampled($image, $source, 0, 0, 0, 0, $newWidth, $newHeight, $width, $height);
+
+    $success = false;
+    switch ($mime) {
+        case 'image/jpeg': $success = imagejpeg($image, $destinationPath, $quality); break;
+        case 'image/png': 
+            // Quality for PNG is 0-9. 85 maps roughly to compression level 8
+            $success = imagepng($image, $destinationPath, 8); 
+            break;
+        case 'image/webp': $success = imagewebp($image, $destinationPath, $quality); break;
+        case 'image/gif': $success = imagegif($image, $destinationPath); break;
+    }
+
+    imagedestroy($image);
+    imagedestroy($source);
+
+    return $success;
+}
+
+/**
+ * Handles file uploads to the assets directory with compression
  */
 function handleFileUpload($file, $targetDir = '../../assets/') {
     if (!isset($file) || $file['error'] !== UPLOAD_ERR_OK) {
@@ -129,6 +188,10 @@ function handleFileUpload($file, $targetDir = '../../assets/') {
     $targetPath = $targetDir . $fileName;
 
     if (move_uploaded_file($file['tmp_name'], $targetPath)) {
+        // Compress the image if it is not an SVG
+        if ($fileType !== 'image/svg+xml') {
+            resizeAndCompressImage($targetPath, $targetPath, 800, 80);
+        }
         return 'assets/' . $fileName;
     }
 

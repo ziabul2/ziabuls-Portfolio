@@ -1,20 +1,32 @@
 <?php
 require_once __DIR__ . '/helpers/data_loader.php';
-$data = loadPortfolioData();
-
-require_once __DIR__ . '/includes/head.php';
-require_once __DIR__ . '/includes/navbar.php';
 require_once __DIR__ . '/helpers/AchievementManager.php';
 
+$data = loadPortfolioData();
 $id = $_GET['id'] ?? '';
 $achievementManager = new AchievementManager();
 $item = $achievementManager->getAchievement($id);
 
 if (!$item) {
+    require_once __DIR__ . '/includes/head.php';
+    require_once __DIR__ . '/includes/navbar.php';
     echo "<div class='container' style='padding: 100px 0; text-align:center;'><h2>Achievement not found</h2><a href='achievements.php'>Return to Achievements</a></div>";
     require_once __DIR__ . '/includes/footer.php';
     exit;
 }
+
+// Set dynamic SEO meta tags
+$page_title = htmlspecialchars($item['title']) . " | " . ($data['seo']['title'] ?? 'Portfolio');
+$meta_description = htmlspecialchars($item['short_description']);
+
+// Ensure OG image is an absolute URL for social crawlers if possible
+$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+$domainName = $_SERVER['HTTP_HOST'];
+$base_url = rtrim($protocol . $domainName . dirname($_SERVER['PHP_SELF']), '/') . '/';
+$og_image = !empty($item['certificate_image']) ? $base_url . htmlspecialchars($item['certificate_image']) : null;
+
+require_once __DIR__ . '/includes/head.php';
+require_once __DIR__ . '/includes/navbar.php';
 ?>
 
 <div class="container" style="padding: 100px 0 50px;">
@@ -51,8 +63,8 @@ if (!$item) {
             <hr style="border-color: #333; margin: 30px 0;">
             
             <div style="line-height: 1.8; font-size: 1.1em; color: #ccc;">
-                <!-- Full Description assumes html or text from textarea -->
-                <?php echo nl2br(htmlspecialchars($item['long_description'])); ?>
+                <!-- Full Description rendered as HTML (Rich Text) -->
+                <?php echo $item['long_description']; ?>
             </div>
             
             <?php if(!empty($item['database_subject'])): ?>

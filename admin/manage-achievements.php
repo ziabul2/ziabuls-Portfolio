@@ -8,6 +8,11 @@ $flash = getFlashMessage();
 
 // Handle Delete
 if (isset($_GET['delete'])) {
+    $token = $_GET['csrf_token'] ?? '';
+    if (!validateCSRFToken($token)) {
+        die('CSRF token validation failed.');
+    }
+    
     if ($achievementManager->deleteAchievement($_GET['delete'])) {
         setFlashMessage('Achievement deleted successfully!');
     } else {
@@ -111,7 +116,7 @@ if ($search) {
                         <td style="padding: 15px; text-align: right;">
                             <a href="../achievement_details.php?id=<?php echo urlencode($item['id']); ?>" target="_blank" class="btn-edit" style="margin-right:5px;"><i class="fas fa-eye"></i></a>
                             <a href="edit-achievement.php?id=<?php echo urlencode($item['id']); ?>" class="btn-edit" style="margin-right:5px;"><i class="fas fa-edit"></i></a>
-                            <a href="manage-achievements.php?delete=<?php echo urlencode($item['id']); ?>" class="btn-remove" style="position:static;" onclick="return confirm('Are you sure you want to delete this achievement?')"><i class="fas fa-trash"></i></a>
+                            <a href="manage-achievements.php?delete=<?php echo urlencode($item['id']); ?>&csrf_token=<?php echo generateCSRFToken(); ?>" class="btn-remove" style="position:static;" onclick="return confirm('Are you sure you want to delete this achievement?')"><i class="fas fa-trash"></i></a>
                         </td>
                     </tr>
                 <?php endforeach; ?>

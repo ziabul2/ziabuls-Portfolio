@@ -3,14 +3,14 @@
         "id": "ach_69a3fbde45480",
         "title": "Web design and development",
         "short_description": "Backup Management",
-        "long_description": "Web design and development involves creating functional, visually appealing websites. Web design focuses on the layout, aesthetics, and user experience, while development handles the technical aspects\u2014front-end (client-side) coding for interactivity and back-end (server-side) logic for data and functionality. Together, they ensure seamless user interaction and efficient website performance. Front-end developers use HTML, CSS, and JavaScript, while back-end developers work with servers, databases, and APIs.",
+        "long_description": "<p>Web design and development involves creating functional, visually appealing websites. Web design focuses on the layout, aesthetics, and user experience, while development handles the technical aspects&mdash;front-end (client-side) coding for interactivity and back-end (server-side) logic for data and functionality. Together, they ensure seamless user interaction and efficient website performance. Front-end developers use HTML, CSS, and JavaScript, while back-end developers work with servers, databases, and <strong>APIs<\/strong>.<\/p>",
         "completion_date": "2024-01-12",
         "organization": "Motlob Traning Center, Gazipur",
         "category": "Programming",
         "verification_link": "",
         "database_subject": "",
         "certificate_image": "assets\/newplot.png",
-        "updated_at": 1772354526,
+        "updated_at": 1772356126,
         "created_at": 1772354526
     }
 ]

@@ -15,6 +15,11 @@ if (!is_dir($assetsDir)) {
 
 // Handle File Delete
 if (isset($_GET['delete'])) {
+    $token = $_GET['csrf_token'] ?? '';
+    if (!validateCSRFToken($token)) {
+        die('CSRF token validation failed.');
+    }
+
     $fileToDelete = basename($_GET['delete']); // prevent directory traversal
     $filePath = $assetsDir . '/' . $fileToDelete;
     
@@ -34,6 +39,11 @@ if (isset($_GET['delete'])) {
 
 // Handle File Upload
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['asset_file'])) {
+    $token = $_POST['csrf_token'] ?? '';
+    if (!validateCSRFToken($token)) {
+        die('CSRF token validation failed.');
+    }
+
     $uploadResult = handleFileUpload($_FILES['asset_file'], '../assets/');
     if (is_array($uploadResult) && isset($uploadResult['error'])) {
         setFlashMessage($uploadResult['error'], 'error');
@@ -93,6 +103,7 @@ function formatBytes($bytes, $precision = 2) {
         <h3><i class="fas fa-upload"></i> Upload New Asset</h3>
         <p style="margin-bottom:15px; color:#888;">Allowed formats: JPG, PNG, WEBP, GIF, SVG</p>
         <form method="POST" enctype="multipart/form-data" style="display:flex; gap:10px; align-items:center;">
+            <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
             <input type="file" name="asset_file" required style="flex:1; padding: 10px; background: #222; border: 1px solid #444; border-radius: 4px; color: white;">
             <button type="submit" class="btn-login" style="width: auto;"><i class="fas fa-cloud-upload-alt"></i> Upload File</button>
         </form>
@@ -149,7 +160,7 @@ function formatBytes($bytes, $precision = 2) {
                             </td>
                             <td style="padding: 15px; text-align: right;">
                                 <a href="../<?php echo htmlspecialchars($file['path']); ?>" target="_blank" class="btn-edit" style="margin-right: 10px;" title="View in new tab"><i class="fas fa-external-link-alt"></i></a>
-                                <a href="manage-assets.php?delete=<?php echo urlencode($file['name']); ?>" class="btn-remove" style="position:static;" onclick="return confirm('Are you sure you want to permanently delete \'<?php echo htmlspecialchars($file['name']); ?>\'? This action cannot be undone.')"><i class="fas fa-trash"></i></a>
+                                <a href="manage-assets.php?delete=<?php echo urlencode($file['name']); ?>&csrf_token=<?php echo generateCSRFToken(); ?>" class="btn-remove" style="position:static;" onclick="return confirm('Are you sure you want to permanently delete \'<?php echo htmlspecialchars($file['name']); ?>\'? This action cannot be undone.')"><i class="fas fa-trash"></i></a>
                             </td>
                         </tr>
                     <?php endforeach; ?>

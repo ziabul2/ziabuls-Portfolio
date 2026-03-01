@@ -17,11 +17,17 @@ if ($id) {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // CSRF Protection
+    $token = $_POST['csrf_token'] ?? '';
+    if (!validateCSRFToken($token)) {
+        die('CSRF token validation failed. Please refresh the page and try again.');
+    }
+
     $postData = [
         'id' => $_POST['id'] ?: uniqid('ach_'),
         'title' => sanitizeInput($_POST['title']),
         'short_description' => sanitizeInput($_POST['short_description']),
-        'long_description' => $_POST['long_description'], // keep html or newlines
+        'long_description' => $_POST['long_description'], // Admin trusted input (TinyMCE HTML)
         'completion_date' => sanitizeInput($_POST['completion_date']),
         'organization' => sanitizeInput($_POST['organization']),
         'category' => sanitizeInput($_POST['category']),
@@ -67,6 +73,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <form method="POST" enctype="multipart/form-data">
         <input type="hidden" name="id" value="<?php echo htmlspecialchars($item['id'] ?? ''); ?>">
         <input type="hidden" name="existing_image" value="<?php echo htmlspecialchars($item['certificate_image'] ?? ''); ?>">
+        <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
 
         <div class="form-group">
             <label>Title <span style="color:var(--error-color)">*</span></label>
@@ -131,7 +138,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         <div class="form-group">
             <label>Detailed Description <span style="color:var(--error-color)">*</span></label>
-            <textarea name="long_description" rows="10" required placeholder="Full details, skills learned, or project scope..."><?php echo htmlspecialchars($item['long_description'] ?? ''); ?></textarea>
+            <textarea name="long_description" id="long_description" rows="10" placeholder="Full details, skills learned, or project scope..."><?php echo htmlspecialchars($item['long_description'] ?? ''); ?></textarea>
         </div>
 
         <div class="form-group" style="padding: 20px; background: rgba(97, 175, 239, 0.05); border-left: 4px solid #61afef; border-radius: 4px;">
@@ -143,5 +150,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <button type="submit" class="btn-login" style="width: auto; padding: 12px 30px;"><i class="fas fa-save"></i> Save Achievement</button>
     </form>
 </div>
+
+<!-- TinyMCE Rich Text Editor -->
+<script src="https://cdn.tiny.cloud/1/t75cgwgnh286rc419ay05y598d7zqdyd0yda8zypmlz62p65/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<script>
+    tinymce.init({
+        selector: '#long_description',
+        plugins: 'lists link image code table wordcount',
+        toolbar: 'undo redo | blocks | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link code',
+        menubar: false,
+        height: 300,
+        skin: 'oxide-dark',
+        content_css: 'dark',
+        setup: function (editor) {
+            editor.on('change', function () {
+                editor.save();
+            });
+        }
+    });
+</script>
 
 <?php require_once __DIR__ . '/includes/footer.php'; ?>
