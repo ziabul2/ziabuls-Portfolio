@@ -77,8 +77,10 @@ foreach ($data['skills_section']['categories'] ?? [] as $cat) {
     <div class="stat-card">
         <h3><i class="fas fa-award"></i> Achievements</h3>
         <p>Manage your milestones, certificates, and awards.</p>
-        <div style="margin-top:20px; display: flex; gap: 10px;">
-            <a href="manage-achievements.php" class="btn-edit">Manage Achievements</a>
+        <div style="margin-top:20px; display: flex; gap: 10px; flex-wrap:wrap;">
+            <a href="manage-achievements.php" class="btn-edit">Manage</a>
+            <a href="edit-achievement.php" class="btn-edit">Add New</a>
+            <a href="edit-achievements-settings.php" class="btn-edit">UI Settings</a>
         </div>
     </div>
 

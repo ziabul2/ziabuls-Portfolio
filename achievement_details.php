@@ -1,4 +1,7 @@
 <?php
+require_once __DIR__ . '/helpers/data_loader.php';
+$data = loadPortfolioData();
+
 require_once __DIR__ . '/includes/head.php';
 require_once __DIR__ . '/includes/navbar.php';
 require_once __DIR__ . '/helpers/AchievementManager.php';

@@ -33,10 +33,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $certificate_image = $_POST['existing_image'] ?? '';
     if (isset($_FILES['image_upload']) && $_FILES['image_upload']['size'] > 0) {
         $uploadResult = handleFileUpload($_FILES['image_upload'], '../assets/');
-        if (isset($uploadResult['error'])) {
+        if (is_array($uploadResult) && isset($uploadResult['error'])) {
             $flashMessage = "<div class='error-msg'>" . $uploadResult['error'] . "</div>";
         } else {
-            $certificate_image = 'assets/' . basename($uploadResult['path']); // relative path
+            $certificate_image = $uploadResult; // function returns the relative path string directly on success
         }
     } elseif (!empty($_POST['image_url'])) { // Fallback if URL is provided
         $certificate_image = sanitizeInput($_POST['image_url']);
