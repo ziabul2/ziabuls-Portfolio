@@ -24,7 +24,7 @@
                 <a href="<?php echo $prefix; ?>#projects" class="nav-link"><span>#</span>projects</a>
                 <a href="<?php echo $prefix; ?>#skills" class="nav-link"><span>#</span>skills</a>
                 <a href="<?php echo $prefix; ?>#about-me" class="nav-link"><span>#</span>about-me</a>
-                <a href="blog.php" class="nav-link <?php echo ($current_page == 'blog.php' || $current_page == 'post.php') ? 'active' : ''; ?>"><span>#</span>blog</a>
+                <a href="<?php echo $prefix; ?>#achievements" class="nav-link"><span>#</span>achievements</a>
                 <a href="<?php echo $prefix; ?>#contacts" class="nav-link"><span>#</span>contacts</a>
             </div>
             <div class="hamburger">

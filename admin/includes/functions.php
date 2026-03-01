@@ -43,8 +43,8 @@ function savePortfolioData($data) {
     // 1. Auto-Backup BEFORE saving (Professional Safety)
     $backupManager->createAutoBackup();
     
-    // 2. Cleanup Old Backups (Retention Policy: Keep last 20)
-    $backupManager->cleanupOldBackups(20);
+    // 2. Cleanup Old Backups (Retention Policy: Keep last 2)
+    $backupManager->cleanupOldBackups(2);
     
     // 3. Save Data potentially using BackupManager's safe save (which also does a temp backup internally usually, but we made it explicit)
     return $backupManager->saveSafely($data);

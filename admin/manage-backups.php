@@ -317,7 +317,7 @@ if ($action === 'create_backup') {
             
             <div class="form-group">
                 <label for="keep_count">Number of Backups to Keep:</label>
-                <input type="number" id="keep_count" name="keep_count" value="10" min="1" max="50" style="padding: 10px; margin-top: 8px; width: 100%;">
+                <input type="number" id="keep_count" name="keep_count" value="2" min="1" max="50" style="padding: 10px; margin-top: 8px; width: 100%;">
                 <small style="color: #999; display: block; margin-top: 5px;">
                     Backups older than the number specified will be deleted
                 </small>

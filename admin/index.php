@@ -67,11 +67,18 @@ foreach ($data['skills_section']['categories'] ?? [] as $cat) {
     </div>
 
     <div class="stat-card">
-        <h3><i class="fas fa-blog"></i> Blog Posts</h3>
-        <p>Manage your articles and news updates.</p>
+        <h3><i class="fas fa-images"></i> Media & Assets</h3>
+        <p>View, upload, and delete site images and files.</p>
+        <div style="margin-top:20px;">
+            <a href="manage-assets.php" class="btn-edit">Manage Assets</a>
+        </div>
+    </div>
+
+    <div class="stat-card">
+        <h3><i class="fas fa-award"></i> Achievements</h3>
+        <p>Manage your milestones, certificates, and awards.</p>
         <div style="margin-top:20px; display: flex; gap: 10px;">
-            <a href="manage-blog.php" class="btn-edit">Manage Posts</a>
-            <a href="edit-blog-settings.php" class="btn-edit">UI Settings</a>
+            <a href="manage-achievements.php" class="btn-edit">Manage Achievements</a>
         </div>
     </div>
 
@@ -83,15 +90,7 @@ foreach ($data['skills_section']['categories'] ?? [] as $cat) {
         </div>
     </div>
 
-    <div class="stat-card" style="background: linear-gradient(135deg, rgba(199, 120, 221, 0.1), rgba(0, 255, 157, 0.1)); border-color: #c778dd;">
-        <h3><i class="fas fa-database"></i> Database Manager</h3>
-        <p>Connection switching, migration wizard, and SQL tools.</p>
-        <div style="margin-top:20px; display: flex; gap: 10px; flex-wrap: wrap;">
-            <a href="database-config.php" class="btn-edit"><i class="fas fa-plug"></i> Connections</a>
-            <a href="database-tables.php" class="btn-edit"><i class="fas fa-table"></i> Tables</a>
-            <a href="database-tools.php" class="btn-edit"><i class="fas fa-tools"></i> Tools & Migration</a>
-        </div>
-    </div>
+
 </div>
 
 <div class="security-info" style="margin-top: 50px; padding: 20px; background: rgba(255,255,255,0.05); border-radius: 8px;">
