@@ -397,10 +397,10 @@ $activityLog = $auth->getActivityLog($adminId);
                     <tbody>
                         <?php foreach ($activityLog as $log): ?>
                             <tr>
-                                <td style="font-size:0.8rem; white-space:nowrap;"><?php echo date('h:i:s A', strtotime($log['created_at'] ?? ($log['time'] ?? 'now'))); ?></td>
+                                <td style="font-size:0.8rem; white-space:nowrap;"><?php echo date('h:i:s A', strtotime($log['timestamp'] ?? 'now')); ?></td>
                                 <td><span class="badge" style="background:rgba(255,255,255,0.1); font-size:0.7rem;"><?php echo htmlspecialchars($log['action']); ?></span></td>
                                 <td style="font-size:0.85rem;"><?php echo htmlspecialchars($log['details']); ?></td>
-                                <td style="font-size:0.8rem; color:#888;" class="ip-mono"><?php echo htmlspecialchars($log['ip_address']); ?></td>
+                                <td style="font-size:0.8rem; color:#888;" class="ip-mono"><?php echo htmlspecialchars($log['ip'] ?? '0.0.0.0'); ?></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>

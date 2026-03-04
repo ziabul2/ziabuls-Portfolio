@@ -63,8 +63,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $lockoutTime == 0) {
         $audit->logLoginAttempt($username, $password, true);
 
         if (!empty($result['requires_2fa']) && $result['requires_2fa'] === true) {
-            // Log the password-ok event even though 2FA still pending
-            $audit->log('Login (2FA Pending)', "Password verified. 2FA required.", 'success', $username);
             header('Location: verify-2fa.php');
             exit;
         }
@@ -73,7 +71,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && $lockoutTime == 0) {
         $_SESSION['admin_token']            = $result['token'];
         $_SESSION['logged_in']              = true;
         $_SESSION['admin_data']['username'] = $username;
-        $audit->log('Login', 'Admin logged in successfully', 'success', $username);
         regenerateSession();
         header('Location: index.php');
         exit;

@@ -41,7 +41,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && !$isOtpLocked) {
             unset($_SESSION['2fa_pending']);
             $_SESSION['logged_in'] = true;
 
-            // Log the completed 2FA login
+            // Log the completed 2FA login (already handled by registerSession or keep specifically?)
+            // Actually, keep this one as it's the FINAL success.
             $auditLogger = new AuditLogger();
             $username = $_SESSION['admin_data']['username'] ?? 'admin';
             $auditLogger->log('Login (2FA Complete)', '2FA OTP verified — full access granted', 'success', $username);

@@ -15,9 +15,9 @@ class AuditLogger {
     private int    $maxLogs = 1000;
 
     public function __construct() {
-        $dataDir                 = __DIR__ . '/../data';
-        $this->auditFile         = $dataDir . '/audit_logs.json';
-        $this->loginAttemptsFile = $dataDir . '/login_attempts_log.json';
+        $dataDir = realpath(__DIR__ . '/../data') ?: (__DIR__ . '/../data');
+        $this->auditFile         = $dataDir . DIRECTORY_SEPARATOR . 'audit_logs.json';
+        $this->loginAttemptsFile = $dataDir . DIRECTORY_SEPARATOR . 'login_attempts_log.json';
 
         foreach ([$this->auditFile, $this->loginAttemptsFile] as $file) {
             if (!file_exists($file)) {
@@ -178,7 +178,7 @@ class AuditLogger {
      */
     public function backup(string $type = 'audit'): string|false {
         $source = $type === 'attempts' ? $this->loginAttemptsFile : $this->auditFile;
-        $dir    = dirname($source) . '/log_backups';
+        $dir    = dirname($source) . DIRECTORY_SEPARATOR . 'log_backups';
 
         if (!is_dir($dir)) {
             mkdir($dir, 0750, true);
@@ -186,9 +186,12 @@ class AuditLogger {
 
         $name = ($type === 'attempts' ? 'login_attempts' : 'audit_logs')
               . '_backup_' . date('Ymd_His') . '.json';
-        $dest = $dir . '/' . $name;
+        $dest = $dir . DIRECTORY_SEPARATOR . $name;
 
-        return copy($source, $dest) ? $dest : false;
+        if (copy($source, $dest)) {
+            return realpath($dest) ?: $dest;
+        }
+        return false;
     }
 
     /**

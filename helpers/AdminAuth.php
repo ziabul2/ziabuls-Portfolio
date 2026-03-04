@@ -28,12 +28,14 @@ class AdminAuth {
     private TwoFactorAuth   $tfa;
 
     public function __construct() {
-        $this->configPath      = __DIR__ . '/../config/admin.php';
-        $this->lockoutDescFile = __DIR__ . '/../data/login_attempts.json';
-        $this->activityLogFile = __DIR__ . '/../logs/admin_activity.log';
-        $dataDir                  = __DIR__ . '/../data';
-        $this->usersFile          = $dataDir . '/users.json';
-        $this->activeSessionsFile = $dataDir . '/active_sessions.json';
+        $dataDir = realpath(__DIR__ . '/../data') ?: (__DIR__ . '/../data');
+        $this->configPath      = realpath(__DIR__ . '/../config/admin.php') ?: (__DIR__ . '/../config/admin.php');
+        $this->lockoutDescFile = $dataDir . DIRECTORY_SEPARATOR . 'login_attempts.json';
+        $this->activityLogFile = realpath(__DIR__ . '/../logs') . DIRECTORY_SEPARATOR . 'admin_activity.log';
+        if (!is_dir(dirname($this->activityLogFile))) @mkdir(dirname($this->activityLogFile), 0750, true);
+        
+        $this->usersFile          = $dataDir . DIRECTORY_SEPARATOR . 'users.json';
+        $this->activeSessionsFile = $dataDir . DIRECTORY_SEPARATOR . 'active_sessions.json';
 
         foreach ([
             dirname($this->lockoutDescFile),
@@ -208,9 +210,7 @@ class AdminAuth {
             ($user['username'] ?? '') === $username
             && password_verify($password, $user['password'])
         ) {
-            $this->logActivity('LOGIN', 'Admin logged in', $ip, $userAgent);
-
-            // Build session base
+            // 1. Build session base FIRST (so logActivity finds the username)
             $token = bin2hex(random_bytes(32));
             $_SESSION['admin_token'] = $token;
             $_SESSION['admin_data']  = [
@@ -223,6 +223,11 @@ class AdminAuth {
             ];
             $_SESSION['start_time']    = time();
             $_SESSION['last_activity'] = time();
+
+            // 2. Now log activity with population ready
+            $logAction = !empty($user['twofa_enabled']) ? 'Login (2FA Pending)' : 'LOGIN';
+            $logDetail = !empty($user['twofa_enabled']) ? 'Password verified, 2FA required' : 'Admin logged in';
+            $this->logActivity($logAction, $logDetail, $ip, $userAgent, $user['username']);
 
             // Clear failed attempts
             $attempts = $this->getAttempts();
@@ -579,38 +584,94 @@ class AdminAuth {
 
     public function getActivityLog(int $adminId, int $limit = 50): array {
         if (!file_exists($this->activityLogFile)) return [];
-        $lines = file($this->activityLogFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
-        if (!$lines) return [];
-        $logs = array_map(fn($l) => json_decode($l, true), $lines);
-        $logs = array_filter($logs);
+        
+        $contents = file_get_contents($this->activityLogFile);
+        if (empty($contents)) return [];
+
+        $logs = [];
+        // Check if it's the old line-delimited format or new JSON array
+        if (strpos(trim($contents), '[') === 0) {
+            $logs = json_decode($contents, true) ?: [];
+        } else {
+            // Migration: Convert line-delimited to array
+            $lines = explode("\n", trim($contents));
+            foreach ($lines as $line) {
+                $entry = json_decode($line, true);
+                if ($entry) {
+                    // Standardize keys during migration
+                    $logs[] = [
+                        'timestamp' => $entry['timestamp'] ?? ($entry['created_at'] ?? ($entry['time'] ?? 'now')),
+                        'action'    => $entry['action'] ?? 'Unknown',
+                        'details'   => $entry['details'] ?? '',
+                        'ip'        => $entry['ip'] ?? ($entry['ip_address'] ?? '0.0.0.0'),
+                        'ua'        => $entry['ua'] ?? '',
+                        'admin'     => $entry['admin'] ?? 'System'
+                    ];
+                }
+            }
+            // Save as new array format immediately
+            file_put_contents($this->activityLogFile, json_encode($logs, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE));
+        }
+
+        if (!$logs) return [];
         usort($logs, function($a, $b) {
-            $ta = strtotime($a['created_at'] ?? ($a['time'] ?? '0'));
-            $tb = strtotime($b['created_at'] ?? ($b['time'] ?? '0'));
+            $ta = strtotime($a['timestamp'] ?? '0');
+            $tb = strtotime($b['timestamp'] ?? '0');
             return $tb - $ta;
         });
         return array_slice($logs, 0, $limit);
     }
 
-    private function logActivity(string $action, string $details, string $ip, string $userAgent): void {
+    private function logActivity(string $action, string $details, string $ip, string $userAgent, ?string $username = null): void {
         $dir = dirname($this->activityLogFile);
         if (!is_dir($dir)) mkdir($dir, 0750, true);
         
+        $resolvedUser = $username ?? ($_SESSION['admin_data']['username'] ?? 'System');
+
         $entry = [
-            'created_at' => date('Y-m-d H:i:s'), 
+            'timestamp'  => date('Y-m-d H:i:s'), 
             'action'     => $action, 
             'details'    => $details, 
-            'ip_address' => $ip, 
-            'ua'         => $userAgent
+            'ip'         => $ip, 
+            'ua'         => $userAgent,
+            'admin'      => $resolvedUser
         ];
 
+        // Use same array-based append logic as AuditLogger
+        $logs = [];
+        if (file_exists($this->activityLogFile)) {
+            $contents = file_get_contents($this->activityLogFile);
+            if (!empty($contents)) {
+                if (strpos(trim($contents), '[') === 0) {
+                    $logs = json_decode($contents, true) ?: [];
+                } else {
+                    // Quick migration in-line (normalized)
+                    $lines = explode("\n", trim($contents));
+                    foreach ($lines as $line) {
+                        $e = json_decode($line, true);
+                        if ($e) $logs[] = [
+                            'timestamp' => $e['timestamp'] ?? ($e['created_at'] ?? ($e['time'] ?? 'now')),
+                            'action'    => $e['action'] ?? '',
+                            'details'   => $e['details'] ?? '',
+                            'ip'        => $e['ip'] ?? ($e['ip_address'] ?? '0.0.0.0'),
+                            'ua'        => $e['ua'] ?? '',
+                            'admin'     => $e['admin'] ?? 'System'
+                        ];
+                    }
+                }
+            }
+        }
+        
+        array_unshift($logs, $entry);
+        if (count($logs) > 100) $logs = array_slice($logs, 0, 100);
+        
         file_put_contents(
             $this->activityLogFile,
-            json_encode($entry) . "\n",
-            FILE_APPEND
+            json_encode($logs, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
         );
 
         // Also log to AuditLogger for central security view
         require_once __DIR__ . '/AuditLogger.php';
-        (new AuditLogger())->log($action, $details, 'success');
+        (new AuditLogger())->log($action, $details, 'success', $resolvedUser);
     }
 }

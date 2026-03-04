@@ -56,6 +56,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 if (isset($_GET['export'])) {
     $type   = in_array($_GET['export'], ['audit', 'attempts']) ? $_GET['export'] : 'audit';
     $format = in_array($_GET['format'] ?? '', ['csv', 'json']) ? $_GET['format'] : 'json';
+    $file   = $_GET['file'] ?? null;
+
+    if ($file) {
+        // Security: Prevent path traversal
+        $safeName = basename($file);
+        $backupsDir = __DIR__ . '/../data/log_backups/';
+        $filePath = realpath($backupsDir . $safeName);
+
+        if ($filePath && strpos($filePath, realpath($backupsDir)) === 0 && file_exists($filePath)) {
+            header('Content-Description: File Transfer');
+            header('Content-Disposition: attachment; filename="' . $safeName . '"');
+            header('Content-Type: application/json');
+            readfile($filePath);
+            exit;
+        } else {
+            header('Location: audit-logs.php?msg=file_not_found');
+            exit;
+        }
+    }
+
     $label  = $type === 'attempts' ? 'login_attempts' : 'audit_logs';
     $fname  = $label . '_' . date('Ymd_His') . '.' . $format;
 
@@ -103,6 +123,7 @@ $msgs = [
     'cleared'     => ['type' => 'success', 'text' => '🗑️ Log cleared (auto-backup was created first).'],
     'deleted_ok'  => ['type' => 'success', 'text' => '🗑️ Backup file deleted.'],
     'delete_fail' => ['type' => 'error',   'text' => '❌ Could not delete backup file.'],
+    'file_not_found' => ['type' => 'error', 'text' => '❌ Backup file not found.'],
 ];
 $msgKey  = $_GET['msg'] ?? '';
 $message = $msgs[$msgKey] ?? null;
