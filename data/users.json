@@ -1,0 +1,15 @@
+[
+    {
+        "id": 1,
+        "email": "ziabulislam2222@gmail.com",
+        "username": "ziabul1",
+        "password": "$2y$10$M1LToP5.UKye78j1M16LYeNitF4XFCOjPXN24y7lS8MWLJRnDJYty",
+        "display_name": "Ziabul islam",
+        "avatar": "\/cv\/assets\/ziabul islam - non bg.png",
+        "twofa_enabled": false,
+        "twofa_secret": "",
+        "backup_codes": [],
+        "otp_attempts": 0,
+        "otp_lock_until": null
+    }
+]

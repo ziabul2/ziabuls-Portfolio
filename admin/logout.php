@@ -1,22 +1,15 @@
 <?php
 require_once __DIR__ . '/../config/security.php';
+require_once __DIR__ . '/../helpers/AuditLogger.php';
 
+$audit = new AuditLogger();
 startSecureSession();
+$auth = new AdminAuth();
 
-// Unset all session variables
-$_SESSION = array();
+$audit->log("Logout", "Admin logged out");
 
-// If it's desired to kill the session, also delete the session cookie.
-if (ini_get("session.use_cookies")) {
-    $params = session_get_cookie_params();
-    setcookie(session_name(), '', time() - 42000,
-        $params["path"], $params["domain"],
-        $params["secure"], $params["httponly"]
-    );
-}
-
-// Finally, destroy the session.
-session_destroy();
+// Call the new Auth logout which cleans up the central session DB
+$auth->logout();
 
 header('Location: login.php');
 exit;

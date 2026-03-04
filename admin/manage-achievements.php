@@ -1,9 +1,11 @@
 <?php
 require_once __DIR__ . '/includes/header.php';
 require_once __DIR__ . '/../helpers/AchievementManager.php';
+require_once __DIR__ . '/../helpers/AuditLogger.php';
 require_once __DIR__ . '/includes/functions.php';
 
 $achievementManager = new AchievementManager();
+$audit = new AuditLogger();
 $flash = getFlashMessage();
 
 // Handle Delete
@@ -14,8 +16,10 @@ if (isset($_GET['delete'])) {
     }
     
     if ($achievementManager->deleteAchievement($_GET['delete'])) {
+        $audit->log("Delete Achievement", "ID: " . $_GET['delete']);
         setFlashMessage('Achievement deleted successfully!');
     } else {
+        $audit->log("Delete Achievement Failed", "ID: " . $_GET['delete'], "failed");
         setFlashMessage('Failed to delete achievement.', 'error');
     }
     header('Location: manage-achievements.php');

@@ -18,7 +18,12 @@
                     <div class="project-content">
                         <h3><?php echo $project['title']; ?></h3>
                         <p><?php echo $project['description']; ?></p>
-                        <a href="<?php echo $project['link_url']; ?>" class="btn btn-sm"><?php echo $project['link_text']; ?></a>
+                        <div style="display:flex; gap:10px;">
+                            <a href="project_details.php?id=<?php echo urlencode($project['title']); ?>" class="btn btn-sm">Case Study -></a>
+                            <?php if(!empty($project['link_url']) && $project['link_url'] !== '#'): ?>
+                                <a href="<?php echo $project['link_url']; ?>" target="_blank" class="btn btn-sm"><?php echo $project['link_text']; ?></a>
+                            <?php endif; ?>
+                        </div>
                     </div>
                 </div>
                 <?php endforeach; ?>

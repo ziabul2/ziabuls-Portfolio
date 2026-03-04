@@ -19,11 +19,7 @@ if (!$item) {
 $page_title = htmlspecialchars($item['title']) . " | " . ($data['seo']['title'] ?? 'Portfolio');
 $meta_description = htmlspecialchars($item['short_description']);
 
-// Ensure OG image is an absolute URL for social crawlers if possible
-$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
-$domainName = $_SERVER['HTTP_HOST'];
-$base_url = rtrim($protocol . $domainName . dirname($_SERVER['PHP_SELF']), '/') . '/';
-$og_image = !empty($item['certificate_image']) ? $base_url . htmlspecialchars($item['certificate_image']) : null;
+$og_image = !empty($item['certificate_image']) ? $item['certificate_image'] : null;
 
 require_once __DIR__ . '/includes/head.php';
 require_once __DIR__ . '/includes/navbar.php';

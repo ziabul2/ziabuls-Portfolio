@@ -32,6 +32,7 @@ $adminSettings = $portfolioData['admin_settings'] ?? [
         </div>
         <nav class="nav-links" style="display:flex; align-items:center;">
             <a href="index.php"><i class="fas fa-home"></i> Dashboard</a>
+            <a href="setup-2fa.php" style="color:var(--accent-color)"><i class="fas fa-shield-alt"></i> 2FA</a>
             <a href="profile.php" style="display:flex; align-items:center; gap:8px;">
                 <?php 
                 $avatar = $_SESSION['admin_data']['avatar'] ?? '';

@@ -6,6 +6,12 @@ $data = getPortfolioData();
 $flash = getFlashMessage();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!isset($_POST['csrf_token']) || !validateCSRFToken($_POST['csrf_token'])) {
+        setFlashMessage('Invalid request token. Please try again.', 'error');
+        header('Location: edit-profile.php');
+        exit;
+    }
+
     // Update Hero section
     $data['hero']['image'] = sanitizeInput($_POST['hero_image']);
     $data['hero']['name'] = sanitizeInput($_POST['hero_name']);
@@ -55,6 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <?php endif; ?>
 
 <form method="POST">
+    <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
     <div class="editor-card">
         <h2>Hero Section</h2>
         <div class="form-group">

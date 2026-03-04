@@ -7,6 +7,12 @@ $flash = getFlashMessage();
 $assets = getAvailableAssets();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!isset($_POST['csrf_token']) || !validateCSRFToken($_POST['csrf_token'])) {
+        setFlashMessage('Invalid request token. Please try again.', 'error');
+        header('Location: edit-site.php');
+        exit;
+    }
+
     // Handle Header
     $data['footer']['logo_text'] = sanitizeInput($_POST['header_logo'] ?? '');
     $data['footer']['role'] = sanitizeInput($_POST['header_role'] ?? '');
@@ -85,6 +91,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <?php endif; ?>
 
 <form method="POST">
+    <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
     <div class="editor-card" style="border-left: 4px solid var(--accent-color);">
         <h2>Admin Panel Configuration</h2>
         <div class="form-group">

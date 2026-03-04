@@ -6,6 +6,12 @@ $data = getPortfolioData();
 $flash = getFlashMessage();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!isset($_POST['csrf_token']) || !validateCSRFToken($_POST['csrf_token'])) {
+        setFlashMessage('Invalid request token. Please try again.', 'error');
+        header('Location: edit-seo.php');
+        exit;
+    }
+
     // Basic sanitization
     // Handle Global SEO
     $data['seo']['description'] = sanitizeInput($_POST['description'] ?? '');
@@ -17,8 +23,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data['seo']['og_image'] = sanitizeInput($_POST['og_image'] ?? $data['seo']['favicon']); // specific or fallback
     
     // Handle Analytics / Verification
-    $data['seo']['google_analytics'] = sanitizeInput($_POST['google_analytics'] ?? '');
+    $rawTags = $_POST['google_analytics'] ?? '';
+    $tagsArray = array_map('trim', explode(',', $rawTags));
+    $tagsArray = array_filter($tagsArray); // Remove empty
+    
+    $data['seo']['google_tags'] = $tagsArray;
+    $data['seo']['google_analytics'] = !empty($tagsArray) ? $tagsArray[0] : '';
     $data['seo']['search_console'] = sanitizeInput($_POST['search_console'] ?? '');
+
+    // Handle robots.txt
+    if (isset($_POST['robots_txt'])) {
+        file_put_contents(__DIR__ . '/../robots.txt', $_POST['robots_txt']);
+    }
     
     // Handle Stylesheets
     if (isset($_POST['stylesheets']) && is_array($_POST['stylesheets'])) {
@@ -26,13 +42,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (savePortfolioData($data)) {
-        setFlashMessage('Expert SEO settings updated!');
+        setFlashMessage('Expert SEO & Robots settings updated!');
         header('Location: edit-seo.php');
         exit;
     } else {
         setFlashMessage('Error saving settings', 'error');
     }
 }
+
+$robotsContent = file_exists(__DIR__ . '/../robots.txt') ? file_get_contents(__DIR__ . '/../robots.txt') : "User-agent: *\nDisallow:";
 ?>
 
 <div class="section-header" style="margin-bottom: 30px;">
@@ -58,6 +76,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 </style>
 
 <form method="POST">
+    <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
     <div style="display:grid; grid-template-columns: 1fr 1fr; gap:30px;">
         
         <!-- GLOBAL META -->
@@ -103,8 +122,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                 </div>
 
                 <div class="form-group">
-                    <label>Google Analytics ID <span class="tooltip-icon" data-tip="Format: G-XXXXXXXXXX">?</span></label>
-                    <input type="text" name="google_analytics" value="<?php echo htmlspecialchars($data['seo']['google_analytics'] ?? ''); ?>" placeholder="G-MEASUREMENT_ID">
+                    <label>Google Tag IDs <span class="tooltip-icon" data-tip="Enter IDs separated by commas (e.g., G-XXXX, GT-YYYY)">?</span></label>
+                    <?php 
+                    $currentTags = $data['seo']['google_tags'] ?? [$data['seo']['google_analytics'] ?? ''];
+                    $tagsString = implode(', ', array_filter($currentTags));
+                    ?>
+                    <input type="text" name="google_analytics" value="<?php echo htmlspecialchars($tagsString); ?>" placeholder="G-T005YHR72T, GT-WKTM3LHJ">
+                    <div style="margin-top: 8px; font-size: 0.75rem; color: #888;">
+                        <i class="fas fa-info-circle"></i> Separate multiple IDs with commas.
+                    </div>
                 </div>
                 <div class="form-group">
                     <label>Google Search Console <span class="tooltip-icon" data-tip="HTML Tag verification code content only">?</span></label>
@@ -128,11 +154,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         </div>
     </div>
 
+    <!-- STYLESHEETS & ROBOTS -->
+    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:30px; margin-top:30px;">
+        <div class="editor-card">
+            <h2><i class="fas fa-robot"></i> robots.txt Editor</h2>
+            <div class="form-group">
+                <label>File Content (robots.txt) <span class="tooltip-icon" data-tip="Manage search engine access and sitemap location">?</span></label>
+                <textarea name="robots_txt" style="height:150px; font-family:monospace;"><?php echo htmlspecialchars($robotsContent); ?></textarea>
+                <small style="color:#666;">Be careful! Incorrect rules can hide your site from search engines.</small>
+            </div>
+        </div>
+
+        <div class="editor-card">
+            <h2><i class="fas fa-sitemap"></i> Sitemap Status</h2>
+            <div style="background:rgba(152,195,121,0.1); padding:15px; border-radius:4px; border:1px solid rgba(152,195,121,0.3);">
+                <p style="font-size:0.9rem; color:#98c379; margin-bottom:10px;">
+                    <i class="fas fa-check-circle"></i> <strong>Sitemap is Dynamic</strong>
+                </p>
+                <?php 
+                $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+                $sitemapUrl = $protocol . $_SERVER['HTTP_HOST'] . str_replace('admin/edit-seo.php', 'sitemap.php', $_SERVER['SCRIPT_NAME']);
+                ?>
+                <p style="font-size:0.8rem; color:#ccc; word-break:break-all;">
+                    <strong>URL:</strong> <a href="<?php echo $sitemapUrl; ?>" target="_blank" style="color:var(--accent-blue);"><?php echo $sitemapUrl; ?></a>
+                </p>
+                <div style="margin-top:15px; padding-top:15px; border-top:1px solid #444;">
+                    <h4 style="font-size:0.85rem; color:#888; margin-bottom:8px;">SEO Best Practice:</h4>
+                    <p style="font-size:0.75rem; color:#666; line-height:1.4;">
+                        Your sitemap is automatically generated from your projects and blog posts. 
+                        We recommend adding the Sitemap URL to your <strong>Google Search Console</strong> for faster indexing.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- STYLESHEETS (Kept from original) -->
     <div class="editor-card" style="margin-top:30px;">
         <h2><i class="fas fa-code"></i> Stylesheets & Resources</h2>
         <div id="stylesheets-container">
-            <?php foreach ($data['seo']['stylesheets'] as $index => $sheet): ?>
+            <?php foreach (($data['seo']['stylesheets'] ?? []) as $index => $sheet): ?>
                 <div class="form-group repeater-item">
                     <input type="text" name="stylesheets[]" value="<?php echo htmlspecialchars($sheet); ?>" required>
                     <button type="button" class="btn-remove" onclick="this.parentElement.remove()">Remove</button>

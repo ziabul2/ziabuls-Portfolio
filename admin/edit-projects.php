@@ -1,11 +1,18 @@
 <?php
 require_once __DIR__ . '/includes/header.php';
 require_once __DIR__ . '/includes/functions.php';
+require_once __DIR__ . '/../helpers/AuditLogger.php';
 
+$audit = new AuditLogger();
 $data = getPortfolioData();
 $flash = getFlashMessage();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $token = $_POST['csrf_token'] ?? '';
+    if (!validateCSRFToken($token)) {
+        die('CSRF token validation failed.');
+    }
+
     if (isset($_POST['projects']) && is_array($_POST['projects'])) {
         $data['projects_section']['items'] = [];
         foreach ($_POST['projects'] as $item) {
@@ -14,6 +21,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     'title' => sanitizeInput($item['title']),
                     'technologies' => sanitizeInput($item['technologies']),
                     'description' => sanitizeInput($item['description']),
+                    'long_description' => $item['long_description'], // allow HTML from TinyMCE
                     'link_text' => sanitizeInput($item['link_text']),
                     'link_url' => sanitizeInput($item['link_url']),
                     'image' => sanitizeInput($item['image'])
@@ -23,10 +31,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 
     if (savePortfolioData($data)) {
+        $audit->log("Update Projects", "Total projects: " . count($data['projects_section']['items']));
         setFlashMessage('Projects updated successfully!');
         header('Location: edit-projects.php');
         exit;
     } else {
+        $audit->log("Update Projects Failed", "Save error", "failed");
         setFlashMessage('Error saving projects', 'error');
     }
 }
@@ -42,6 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <?php endif; ?>
 
 <form method="POST">
+    <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
     <div id="projects-container">
         <?php foreach ($data['projects_section']['items'] as $index => $item): ?>
             <div class="editor-card repeater-item">
@@ -55,8 +66,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <input type="text" name="projects[<?php echo $index; ?>][technologies]" value="<?php echo htmlspecialchars($item['technologies']); ?>" required>
                 </div>
                 <div class="form-group">
-                    <label>Description</label>
+                    <label>Short Description (Homepage)</label>
                     <textarea name="projects[<?php echo $index; ?>][description]" required><?php echo htmlspecialchars($item['description']); ?></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Long Description (Case Study / Details)</label>
+                    <textarea name="projects[<?php echo $index; ?>][long_description]" class="tinymce-editor"><?php echo htmlspecialchars($item['long_description'] ?? ''); ?></textarea>
                 </div>
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                     <div class="form-group">
@@ -104,8 +119,12 @@ document.getElementById('add-project').addEventListener('click', function() {
             <input type="text" name="projects[${projectCount}][technologies]" required>
         </div>
         <div class="form-group">
-            <label>Description</label>
+            <label>Short Description (Homepage)</label>
             <textarea name="projects[${projectCount}][description]" required></textarea>
+        </div>
+        <div class="form-group">
+            <label>Long Description (Case Study / Details)</label>
+            <textarea name="projects[${projectCount}][long_description]" class="tinymce-editor"></textarea>
         </div>
         <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 20px;">
             <div class="form-group">
@@ -119,16 +138,40 @@ document.getElementById('add-project').addEventListener('click', function() {
         </div>
         <div class="form-group">
             <label>Project Image</label>
-            <img id="proj_img_preview_${currentCount}" src="../assets/project1.png" class="image-preview">
+            <img id="proj_img_preview_${projectCount}" src="../assets/project1.png" class="image-preview">
             <div class="image-picker-controls">
-                <input type="text" id="proj_image_${currentCount}" name="projects[${currentCount}][image]" value="assets/project1.png" readonly style="background:#111;">
-                <button type="button" class="btn-edit" onclick="openMediaPicker('proj_image_${currentCount}', 'proj_img_preview_${currentCount}')">Change Image</button>
+                <input type="text" id="proj_image_${projectCount}" name="projects[${projectCount}][image]" value="assets/project1.png" readonly style="background:#111;">
+                <button type="button" class="btn-edit" onclick="openMediaPicker('proj_image_${projectCount}', 'proj_img_preview_${projectCount}')">Change Image</button>
             </div>
         </div>
     `;
     container.appendChild(div);
+    
+    // Initialize TinyMCE for new element
+    tinymce.init({
+        selector: `.tinymce-editor`,
+        plugins: 'advlist autolink lists link image charmap preview anchor searchreplace vertical align checklist',
+        toolbar: 'undo redo | blocks | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent | removeformat',
+        skin: "oxide-dark",
+        content_css: "dark",
+        height: 300
+    });
+
     projectCount++;
 });
+</script>
+
+<!-- TinyMCE Rich Text Editor -->
+<script src="https://cdn.tiny.cloud/1/t75cgwgnh286rc419ay05y598d7zqdyd0yda8zypmlz62p65/tinymce/6/tinymce.min.js" referrerpolicy="origin"></script>
+<script>
+    tinymce.init({
+        selector: '.tinymce-editor',
+        plugins: 'advlist autolink lists link image charmap preview anchor searchreplace vertical align checklist',
+        toolbar: 'undo redo | blocks | bold italic | alignleft aligncenter alignright | bullist numlist outdent indent | removeformat',
+        skin: "oxide-dark",
+        content_css: "dark",
+        height: 300
+    });
 </script>
 
 <?php 

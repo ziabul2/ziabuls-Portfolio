@@ -1,0 +1,20 @@
+[
+    {
+        "org": "Northern University Bangladesh, Dhaka",
+        "period": "2025 - Now",
+        "degree": "BSc in Computer Science and Engineering (CSE)",
+        "details": "GPA: Result Pending, Student ID: 42250102217"
+    },
+    {
+        "org": "Image polytechnic institute, Rangpur",
+        "period": "2019-2023",
+        "degree": "Diploma Engineering in Computer science and engineering (CSE)",
+        "details": "CGPA: 3.86, Board: BTEB"
+    },
+    {
+        "org": "Daglagonj high school, Parbatipur",
+        "period": "2019",
+        "degree": "SSC(Science)",
+        "details": "GPA: 4.11, Board: Dinajpur, Passing Year: 2019"
+    }
+]

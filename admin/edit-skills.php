@@ -6,6 +6,12 @@ $data = getPortfolioData();
 $flash = getFlashMessage();
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    if (!isset($_POST['csrf_token']) || !validateCSRFToken($_POST['csrf_token'])) {
+        setFlashMessage('Invalid request token. Please try again.', 'error');
+        header('Location: edit-skills.php');
+        exit;
+    }
+
     if (isset($_POST['categories']) && is_array($_POST['categories'])) {
         $data['skills_section']['categories'] = [];
         foreach ($_POST['categories'] as $cat) {
@@ -43,6 +49,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <?php endif; ?>
 
 <form method="POST">
+    <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
     <div id="skills-container">
         <?php foreach ($data['skills_section']['categories'] as $index => $cat): ?>
             <div class="editor-card repeater-item">

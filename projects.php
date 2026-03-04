@@ -1,3 +1,7 @@
+<?php 
+require_once __DIR__ . '/helpers/data_loader.php';
+$data = loadPortfolioData();
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -59,85 +63,24 @@
             </div>
             
             <div class="project-grid">
-                <!-- Project 1 -->
+                <?php foreach ($data['projects_section']['items'] as $project): ?>
                 <div class="project-card">
                     <div class="project-img">
-                        <img src="assets/project1.png" alt="Portfolio Website">
+                        <img src="<?php echo htmlspecialchars($project['image']); ?>" alt="<?php echo htmlspecialchars($project['title']); ?>">
                     </div>
-                    <div class="project-tags">HTML CSS PHP</div>
+                    <div class="project-tags"><?php echo htmlspecialchars($project['technologies']); ?></div>
                     <div class="project-info">
-                        <h3>Portfolio Website</h3>
-                        <p>Personal portfolio built with raw PHP and custom CSS.</p>
-                        <div style="display:flex; gap:10px;">
-                            <a href="http://www.zim.rf.gd/" target="_blank" class="btn btn-sm">Live <~></a>
-                            <a href="https://github.com/ziabul2" target="_blank" class="btn btn-sm">Github >=></a>
+                        <h3><?php echo htmlspecialchars($project['title']); ?></h3>
+                        <p><?php echo htmlspecialchars($project['description']); ?></p>
+                        <div style="display:flex; gap:10px; flex-wrap:wrap;">
+                            <a href="project_details.php?id=<?php echo urlencode($project['title']); ?>" class="btn btn-sm">Details -></a>
+                            <?php if(!empty($project['link_url']) && $project['link_url'] !== '#'): ?>
+                                <a href="<?php echo htmlspecialchars($project['link_url']); ?>" target="_blank" class="btn btn-sm"><?php echo htmlspecialchars($project['link_text']); ?> <~></a>
+                            <?php endif; ?>
                         </div>
                     </div>
                 </div>
-
-                 <!-- Project 2 -->
-                 <div class="project-card">
-                    <div class="project-img">
-                        <img src="assets/project2.png" alt="Accounts System">
-                    </div>
-                    <div class="project-tags">Python Excel</div>
-                    <div class="project-info">
-                        <h3>Accounts System</h3>
-                        <p>Automated accounting tool for Rangpur Eye Hospital.</p>
-                        <div style="display:flex; gap:10px;">
-                             <a href="#" class="btn btn-sm">Details -></a>
-                        </div>
-                    </div>
-                </div>
-
-                 <!-- Project 3 -->
-                 <div class="project-card">
-                    <div class="project-img">
-                        <img src="assets/project3.png" alt="Network Setup">
-                    </div>
-                    <div class="project-tags">Networking Cisco</div>
-                    <div class="project-info">
-                        <h3>Network Setup</h3>
-                        <p>Hospital networking infrastructure setup and management.</p>
-                        <div style="display:flex; gap:10px;">
-                            <a href="#" class="btn btn-sm">View -></a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Project 4 (New) -->
-                <div class="project-card">
-                    <div class="project-img">
-                        <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#444;">
-                            <i class="fas fa-chart-line fa-3x"></i>
-                        </div>
-                    </div>
-                    <div class="project-tags">Data Analysis</div>
-                    <div class="project-info">
-                        <h3>Data Science Project</h3>
-                        <p>Analysis of large datasets using Python and Pandas (HP LIFE Course).</p>
-                        <div style="display:flex; gap:10px;">
-                            <a href="https://github.com/ziabul2" target="_blank" class="btn btn-sm">Github >=></a>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Project 5 (New) -->
-                <div class="project-card">
-                    <div class="project-img">
-                        <div style="width:100%; height:100%; display:flex; align-items:center; justify-content:center; background:#444;">
-                            <i class="fas fa-mobile-alt fa-3x"></i>
-                        </div>
-                    </div>
-                    <div class="project-tags">Android Java</div>
-                    <div class="project-info">
-                        <h3>Mobile App Concept</h3>
-                        <p>Basic Android application for task management.</p>
-                        <div style="display:flex; gap:10px;">
-                            <a href="https://github.com/ziabul2" target="_blank" class="btn btn-sm">Github >=></a>
-                        </div>
-                    </div>
-                </div>
+                <?php endforeach; ?>
             </div>
         </div>
     </section>

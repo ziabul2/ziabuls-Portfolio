@@ -1,9 +1,11 @@
 <?php
 require_once __DIR__ . '/includes/header.php';
 require_once __DIR__ . '/../helpers/AchievementManager.php';
+require_once __DIR__ . '/../helpers/AuditLogger.php';
 require_once __DIR__ . '/includes/functions.php';
 
 $achievementManager = new AchievementManager();
+$audit = new AuditLogger();
 $id = $_GET['id'] ?? null;
 $item = null;
 $flashMessage = '';
@@ -52,10 +54,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if (empty($flashMessage)) {
         if ($achievementManager->saveAchievement($postData)) {
+            $audit->log($id ? "Edit Achievement" : "Add Achievement", "Title: " . $postData['title']);
             setFlashMessage('Achievement saved successfully!');
             header('Location: manage-achievements.php');
             exit;
         } else {
+            $audit->log($id ? "Edit Achievement Failed" : "Add Achievement Failed", "Title: " . $postData['title'], "failed");
             $flashMessage = "<div class='error-msg'>Failed to save achievement.</div>";
         }
     }

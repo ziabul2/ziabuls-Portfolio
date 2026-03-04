@@ -1,0 +1,5 @@
+# Block all web access to data files
+<Files "*">
+    Order Allow,Deny
+    Deny from all
+</Files>

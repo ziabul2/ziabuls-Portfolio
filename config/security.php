@@ -5,14 +5,18 @@
 
 function startSecureSession() {
     if (session_status() === PHP_SESSION_NONE) {
-        // Set secure session cookie parameters
+        // Detect HTTPS — works for direct TLS and behind reverse proxies
+        $isHttps = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off')
+                || ($_SERVER['SERVER_PORT'] ?? 80) == 443
+                || ($_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '') === 'https';
+
         session_set_cookie_params([
             'lifetime' => 3600,
-            'path' => '/',
-            'domain' => '',
-            'secure' => isset($_SERVER['HTTPS']),
-            'httponly' => true,
-            'samesite' => 'Strict'
+            'path'     => '/',
+            'domain'   => '',
+            'secure'   => $isHttps,   // true on HTTPS, false on HTTP (localhost dev)
+            'httponly' => true,        // Prevent JS access
+            'samesite' => 'Strict'     // Prevent cross-site tracking
         ]);
         session_start();
     }

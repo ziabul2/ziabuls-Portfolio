@@ -1,0 +1,76 @@
+[
+    {
+        "id": "hero",
+        "title": "Hero",
+        "type": "builtin",
+        "visible": true,
+        "order": 1,
+        "include_path": "includes/hero.php"
+    },
+    {
+        "id": "professional_experience",
+        "title": "PROFESSIONAL EXPERIENCE",
+        "type": "dynamic_list",
+        "visible": true,
+        "order": 2,
+        "data_file": "data/experience.json",
+        "icon": "fas fa-briefcase"
+    },
+    {
+        "id": "education",
+        "title": "Education",
+        "type": "dynamic_list",
+        "visible": true,
+        "order": 3,
+        "data_file": "data/education.json",
+        "icon": "fas fa-graduation-cap"
+    },
+    {
+        "id": "projects",
+        "title": "Projects",
+        "type": "builtin",
+        "visible": true,
+        "order": 4,
+        "include_path": "includes/projects.php"
+    },
+    {
+        "id": "skills",
+        "title": "Skills",
+        "type": "builtin",
+        "visible": true,
+        "order": 5,
+        "include_path": "includes/skills.php"
+    },
+    {
+        "id": "about",
+        "title": "About Me",
+        "type": "builtin",
+        "visible": true,
+        "order": 6,
+        "include_path": "includes/about.php"
+    },
+    {
+        "id": "achievements",
+        "title": "Achievements",
+        "type": "builtin",
+        "visible": true,
+        "order": 7,
+        "include_path": "includes/achievements_preview.php"
+    },
+    {
+        "id": "testimonials",
+        "title": "Testimonials",
+        "type": "builtin",
+        "visible": true,
+        "order": 8,
+        "include_path": "includes/testimonials.php"
+    },
+    {
+        "id": "contact",
+        "title": "Contact",
+        "type": "builtin",
+        "visible": true,
+        "order": 9,
+        "include_path": "includes/contact.php"
+    }
+]

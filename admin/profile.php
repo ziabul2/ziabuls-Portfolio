@@ -113,13 +113,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
     elseif ($action === 'logout_session') {
         $tokenToKill = $_POST['session_token'];
-        $auth->logout($tokenToKill);
+        $auth->revokeSession($tokenToKill);
         $message = "Session terminated.";
         $msgType = "success";
-        if ($tokenToKill === $_SESSION['admin_token']) {
-            header('Location: login.php');
-            exit;
-        }
     }
     elseif ($action === 'logout_all') {
         $auth->logoutAll($adminId);
@@ -208,11 +204,11 @@ $activityLog = $auth->getActivityLog($adminId);
 
 <div class="profile-container">
     <div class="profile-sidebar">
-        <button class="tab-btn active" onclick="openTab('overview')"><i class="fas fa-id-card"></i> Overview</button>
-        <button class="tab-btn" onclick="openTab('edit')"><i class="fas fa-user-edit"></i> Edit Profile</button>
-        <button class="tab-btn" onclick="openTab('security')"><i class="fas fa-lock"></i> Security</button>
-        <button class="tab-btn" onclick="openTab('sessions')"><i class="fas fa-desktop"></i> Sessions</button>
-        <button class="tab-btn" onclick="openTab('activity')"><i class="fas fa-history"></i> Activity Log</button>
+        <button class="tab-btn active" onclick="openTab('overview', this)"><i class="fas fa-id-card"></i> Overview</button>
+        <button class="tab-btn" onclick="openTab('edit', this)"><i class="fas fa-user-edit"></i> Edit Profile</button>
+        <button class="tab-btn" onclick="openTab('security', this)"><i class="fas fa-lock"></i> Security</button>
+        <button class="tab-btn" onclick="openTab('sessions', this)"><i class="fas fa-desktop"></i> Sessions</button>
+        <button class="tab-btn" onclick="openTab('activity', this)"><i class="fas fa-history"></i> Activity Log</button>
     </div>
 
     <div class="profile-content">
@@ -236,23 +232,22 @@ $activityLog = $auth->getActivityLog($adminId);
             </div>
 
             <div class="card">
-                <h3>Current Session</h3>
                 <div style="margin-top: 15px; display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
                     <div>
                         <small style="color:#888;">IP Address</small>
-                        <div><?php echo htmlspecialchars($currentSessionInfo['ip_address']); ?></div>
+                        <div class="ip-mono" style="font-size:0.9rem; color:#61afef;"><?php echo htmlspecialchars($currentSessionInfo['ip_address']); ?></div>
                     </div>
                     <div>
-                        <small style="color:#888;">Device</small>
-                        <div style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;"><?php echo htmlspecialchars($currentSessionInfo['user_agent']); ?></div>
+                        <small style="color:#888;">Network / ISP</small>
+                        <div style="font-size:0.85rem;"><?php echo htmlspecialchars($currentSessionInfo['telemetry']['organization'] ?? 'Unknown'); ?></div>
                     </div>
                     <div>
                         <small style="color:#888;">Logged in</small>
-                        <div><?php echo time_ago($currentSessionInfo['created_at']); ?></div>
+                        <div style="font-size:0.85rem;"><?php echo date('h:i:s A', $currentSessionInfo['created_at']); ?></div>
                     </div>
                     <div>
-                        <small style="color:#888;">Last Activity</small>
-                        <div><?php echo time_ago($currentSessionInfo['last_activity']); ?></div>
+                        <small style="color:#888;">Location</small>
+                        <div style="font-size:0.85rem;"><?php echo htmlspecialchars($currentSessionInfo['telemetry']['country'] ?? 'Unknown'); ?> (<?php echo htmlspecialchars($currentSessionInfo['telemetry']['country_code'] ?? 'XX'); ?>)</div>
                     </div>
                 </div>
             </div>
@@ -350,26 +345,35 @@ $activityLog = $auth->getActivityLog($adminId);
                 </div>
 
                 <?php foreach ($activeSessions as $s): ?>
-                    <div class="session-item">
-                        <div>
-                            <div style="font-weight: bold;">
-                                <?php echo htmlspecialchars($s['ip_address']); ?>
-                                <?php if ($s['session_token'] === $_SESSION['admin_token']): ?>
-                                    <span class="badge badge-success">Current</span>
+                    <?php 
+                        $isCurrent = ($s['session_token'] === $_SESSION['admin_token']);
+                        $st = $s['telemetry'] ?? [];
+                    ?>
+                    <div class="session-item" <?php echo $isCurrent ? 'style="border-left: 3px solid var(--accent-color); padding-left:12px;"' : ''; ?>>
+                        <div style="flex:1;">
+                            <div style="display:flex; align-items:center; gap:8px;">
+                                <div class="ip-mono" style="font-weight: bold; color:#eee;"><?php echo htmlspecialchars($s['ip_address']); ?></div>
+                                <?php if ($isCurrent): ?>
+                                    <span class="badge badge-success" style="font-size:0.65rem;">THIS DEVICE</span>
                                 <?php endif; ?>
+                                <span style="font-size:0.75rem; color:#555;"><?php echo htmlspecialchars($st['country_code'] ?? 'XX'); ?> | <?php echo htmlspecialchars($st['type'] ?? 'Fixed'); ?></span>
                             </div>
-                            <div style="font-size: 0.9em; color: #888; margin-top: 5px;">
-                                <?php echo htmlspecialchars($s['user_agent']); ?>
+                            <div style="font-size: 0.82rem; color: #888; margin-top: 4px;">
+                                <i class="fas fa-network-wired" style="font-size:0.7rem;"></i> <?php echo htmlspecialchars($st['organization'] ?? 'Unknown'); ?> (ASN: <?php echo htmlspecialchars($st['asn'] ?? 'N/A'); ?>)
                             </div>
-                            <div style="font-size: 0.8em; color: #666; margin-top: 5px;">
-                                Last active: <?php echo time_ago($s['last_activity']); ?>
+                            <div style="font-size: 0.75rem; color: #666; margin-top: 4px;">
+                                <i class="fas fa-clock" style="font-size:0.7rem;"></i> Logged in: <?php echo date('h:i:s A', $s['created_at']); ?> 
+                                &bull; Activity: <?php echo time_ago($s['last_activity']); ?>
+                            </div>
+                            <div style="font-size: 0.72rem; color: #444; margin-top: 4px; font-family:monospace;">
+                                <?php echo htmlspecialchars(substr($s['user_agent'], 0, 80)); ?>...
                             </div>
                         </div>
-                        <?php if ($s['session_token'] !== $_SESSION['admin_token']): ?>
+                        <?php if (!$isCurrent): ?>
                             <form method="POST">
                                 <input type="hidden" name="action" value="logout_session">
                                 <input type="hidden" name="session_token" value="<?php echo $s['session_token']; ?>">
-                                <button type="submit" class="btn-remove" style="padding: 5px 10px; font-size: 0.8em;">Revoke</button>
+                                <button type="submit" class="btn-remove" style="padding: 6px 12px; font-size: 0.75rem;"><i class="fas fa-user-slash"></i> Revoke</button>
                             </form>
                         <?php endif; ?>
                     </div>
@@ -393,10 +397,10 @@ $activityLog = $auth->getActivityLog($adminId);
                     <tbody>
                         <?php foreach ($activityLog as $log): ?>
                             <tr>
-                                <td><?php echo time_ago($log['created_at']); ?></td>
-                                <td><span class="badge" style="background:rgba(255,255,255,0.1);"><?php echo htmlspecialchars($log['action']); ?></span></td>
-                                <td><?php echo htmlspecialchars($log['details']); ?></td>
-                                <td style="font-size:0.9em; color:#888;"><?php echo htmlspecialchars($log['ip_address']); ?></td>
+                                <td style="font-size:0.8rem; white-space:nowrap;"><?php echo date('h:i:s A', strtotime($log['created_at'] ?? ($log['time'] ?? 'now'))); ?></td>
+                                <td><span class="badge" style="background:rgba(255,255,255,0.1); font-size:0.7rem;"><?php echo htmlspecialchars($log['action']); ?></span></td>
+                                <td style="font-size:0.85rem;"><?php echo htmlspecialchars($log['details']); ?></td>
+                                <td style="font-size:0.8rem; color:#888;" class="ip-mono"><?php echo htmlspecialchars($log['ip_address']); ?></td>
                             </tr>
                         <?php endforeach; ?>
                     </tbody>
@@ -407,15 +411,23 @@ $activityLog = $auth->getActivityLog($adminId);
 </div>
 
 <script>
-function openTab(tabName) {
+function openTab(tabName, btn) {
     // Hide all tabs
     document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(el => el.classList.remove('active'));
     
     // Show selected
-    document.getElementById(tabName).classList.add('active');
-    // Highlight button - find button with onclick matching
-    document.querySelector(`button[onclick="openTab('${tabName}')"]`).classList.add('active');
+    const target = document.getElementById(tabName);
+    if (target) target.classList.add('active');
+
+    // Highlight button
+    if (btn) {
+        btn.classList.add('active');
+    } else {
+        // Fallback
+        const fallback = document.querySelector(`button[onclick*="'${tabName}'"]`);
+        if (fallback) fallback.classList.add('active');
+    }
 }
 
 // Helper for relative time (simple JS version for live updates if needed, but PHP is handling it now)
@@ -423,7 +435,7 @@ function openTab(tabName) {
 
 <?php
 function time_ago($timestamp) {
-    if (!ctype_digit($timestamp)) {
+    if (!ctype_digit((string)$timestamp)) {
         $timestamp = strtotime($timestamp);
     }
     $diff = time() - $timestamp;
@@ -431,7 +443,9 @@ function time_ago($timestamp) {
     if ($diff < 60) return "Just now";
     if ($diff < 3600) return floor($diff/60) . "m ago";
     if ($diff < 86400) return floor($diff/3600) . "h ago";
-    return date("M j, Y", $timestamp);
+    
+    // Greater than a day, show full 12h date
+    return date("M j, h:i A", $timestamp);
 }
 
 require_once __DIR__ . '/includes/media-picker.php';

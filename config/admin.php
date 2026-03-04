@@ -6,4 +6,7 @@ return array (
   'avatar' => '/cv/assets/ziabul islam - non bg.png',
   'display_name' => 'Ziabul islam',
   'email' => 'ziabulislam2222@gmail.com',
+  // Google reCAPTCHA v2
+  'recaptcha_site_key'   => '6LfgC30sAAAAAOJtc_kCqrMFY-xp98SSdIGFZ26N',
+  'recaptcha_secret_key' => '6LfgC30sAAAAAEKA750Hk_1Hjy-VVvsNA8YLrx7r',
 );

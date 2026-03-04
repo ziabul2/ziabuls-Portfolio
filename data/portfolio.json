@@ -2,10 +2,23 @@
     "seo": {
         "title": "ZIMBABU | Full Stack Developer",
         "favicon": "assets/ziabul islam - non bg.png",
+        "google_analytics": "G-3TXJZ4E0W7",
+        "google_tags": [
+            "G-3TXJZ4E0W7",
+            "G-3TXJZ4E0W",
+            "G-T005YHR72T",
+            "GT-WKTM3LHJ"
+        ],
         "stylesheets": [
             "css/style.css",
             "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
-        ]
+        ],
+        "description": "hi",
+        "keywords": "",
+        "author": "Ziabul Islam",
+        "robots": "index, follow",
+        "og_image": "/cv/assets/ziabul islam - non bg.png",
+        "search_console": ""
     },
     "admin_settings": {
         "title": "Admin Dashboard",
@@ -58,6 +71,7 @@
                 "title": "My Portfolio Website",
                 "technologies": "PHP CSS MySQL",
                 "description": "Personal portfolio built with raw PHP and custom CSS.",
+                "long_description": "",
                 "link_text": "Live",
                 "link_url": "#",
                 "image": "assets/project1.png"
@@ -66,6 +80,7 @@
                 "title": "Accounts System",
                 "technologies": "Python Tkinter SQLite",
                 "description": "Automated accounting tool for Rangpur Eye Hospital.",
+                "long_description": "",
                 "link_text": "Cached",
                 "link_url": "#",
                 "image": "assets/project2.png"
@@ -74,6 +89,7 @@
                 "title": "Network Setup",
                 "technologies": "Cisco Packet Tracer",
                 "description": "Hospital networking infrastructure setup and management.",
+                "long_description": "",
                 "link_text": "View",
                 "link_url": "#",
                 "image": "assets/project3.png"
@@ -153,13 +169,13 @@
         "intro": "I\u2019m interested in freelance opportunities. However, if you have other request or question, don\u2019t hesitate to contact me",
         "message_title": "Message me here",
         "phone": "01581205088",
-        "email": "ziabul@duck.com",
+        "email": "ziabulislam2222@gmail.com",
         "email_button_text": "Email Now"
     },
     "footer": {
         "logo_text": "ZIABUL ISLAM",
         "role": "Computer Engineer",
-        "email": "ziabul@duck.com",
+        "email": "ziabulislam2222@gmail.com",
         "media_title": "Media",
         "copyright_text": "Made by Ziabul Islam"
     },
@@ -225,5 +241,94 @@
     ],
     "profile": {
         "name": "Test User 1769070971"
+    },
+    "resume_data": {
+        "personal_info": {
+            "father_name": "MD. HASAN ALI",
+            "mother_name": "MOST. JEBON NESA",
+            "dob": "28-Nov-2003",
+            "nid": "6912903488",
+            "religion": "Islam",
+            "nationality": "Bangladeshi"
+        },
+        "references": [
+            {
+                "name": "Md Manik Ullah",
+                "org": "Image polytechnic institute, Rangpur",
+                "designation": "Computer Engineer",
+                "phone": "+8801727364748",
+                "email": "engmanik11@gmail.com",
+                "relation": "Academic"
+            }
+        ],
+        "training_summary": [
+            {
+                "title": "Web Design and Development (BTEB)",
+                "org": "Matlob Karigori & Computer Proshikkon Institute",
+                "points": [
+                    "Design, Development, Update and Implement",
+                    "WordPress and Theme Customization"
+                ]
+            },
+            {
+                "title": "Online Base Training from Hacker Rank",
+                "org": "Hacker Rank",
+                "points": [
+                    "Python Programming - Duration: 5 month",
+                    "Java programming - Duration: 5 month"
+                ]
+            }
+        ],
+        "professional_experience": [
+            {
+                "org": "Rangpur Eye Hospital, Rangpur",
+                "period": "2023-Now",
+                "role": "Computer Operator cum Junior Account Manager",
+                "points": [
+                    "Account Management & Financial Operations.",
+                    "IT Support & System Administration.",
+                    "Data Entry & Documentation.",
+                    "Technical Skills Demonstrated (Database management, Network troubleshooting)",
+                    "Administrative Support & Printing.",
+                    "Patient Information Management"
+                ]
+            }
+        ],
+        "education": [
+            {
+                "org": "Northern University Bangladesh, Dhaka",
+                "period": "2025 - Now",
+                "degree": "BSc in Computer Science and Engineering (CSE)",
+                "details": "GPA: Result Pending, Student ID: 42250102217"
+            },
+            {
+                "org": "Image polytechnic institute, Rangpur",
+                "period": "2019-2023",
+                "degree": "Diploma Engineering in Computer science and engineering (CSE)",
+                "details": "CGPA: 3.86, Board: BTEB"
+            },
+            {
+                "org": "Daglagonj high school, Parbatipur",
+                "period": "2019",
+                "degree": "SSC(Science)",
+                "details": "GPA: 4.11, Board: Dinajpur, Passing Year: 2019"
+            }
+        ],
+        "expertise": [
+            "Creativity, Critical Thinking, Leadership",
+            "Management Skills",
+            "Networking",
+            "Photoshop, illustrator, Video Editing",
+            "Web design and Development",
+            "Language (Bangla, English)"
+        ],
+        "interests": [
+            "Acquiring new skills",
+            "Reading newspaper and Books",
+            "Traveling",
+            "Problem solving",
+            "Learning new language",
+            "Research in interesting things"
+        ]
     }
 }

@@ -4,7 +4,9 @@
  */
 require_once __DIR__ . '/includes/header.php';
 require_once __DIR__ . '/includes/functions.php';
+require_once __DIR__ . '/../helpers/AuditLogger.php';
 
+$audit = new AuditLogger();
 $assetsDir = realpath(__DIR__ . '/../assets/');
 $flash = getFlashMessage();
 
@@ -26,8 +28,10 @@ if (isset($_GET['delete'])) {
     // Check if it's a file and within the assets directory
     if (is_file($filePath) && strpos(realpath($filePath), $assetsDir) === 0) {
         if (unlink($filePath)) {
+            $audit->log("Delete Asset", "File: $fileToDelete");
             setFlashMessage("File '$fileToDelete' deleted successfully!");
         } else {
+            $audit->log("Delete Asset Failed", "File: $fileToDelete", "failed");
             setFlashMessage("Failed to delete file '$fileToDelete'.", "error");
         }
     } else {
@@ -46,8 +50,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['asset_file'])) {
 
     $uploadResult = handleFileUpload($_FILES['asset_file'], '../assets/');
     if (is_array($uploadResult) && isset($uploadResult['error'])) {
+        $audit->log("Upload Asset Failed", "Error: " . $uploadResult['error'], "failed");
         setFlashMessage($uploadResult['error'], 'error');
     } else {
+        $audit->log("Upload Asset", "File: " . basename($uploadResult));
         setFlashMessage('File uploaded successfully!');
     }
     header('Location: manage-assets.php');
